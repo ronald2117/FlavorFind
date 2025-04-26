@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebaseConfig';
+import Logo from '../components/Logo';
 
 const SignInScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -10,7 +11,7 @@ const SignInScreen = ({ navigation }) => {
   const handleSignIn = async () => {
     try {
       await signInWithEmailAndPassword(auth, email.trim(), password);
-      navigation.navigate('NewsFeedScreen'); // Ensure this screen exists in your navigation
+      navigation.navigate('NewsFeedScreen');
     } catch (error) {
       console.error('Sign in failed:', error.message);
     }
@@ -18,7 +19,7 @@ const SignInScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>TasteFind</Text>
+      <Logo width={150} height={150} />
       <TextInput
         style={styles.input}
         placeholder="Email"
@@ -48,7 +49,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 16,
-    backgroundColor: '#fff',
+    backgroundColor: '#111111',
   },
   title: {
     fontSize: 24,
