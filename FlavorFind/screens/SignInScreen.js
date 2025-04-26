@@ -1,15 +1,27 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
-import { Ionicons } from '@expo/vector-icons'; // for the eye icon
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebaseConfig'; 
+import { useNavigation } from '@react-navigation/native'; 
+import { Ionicons } from '@expo/vector-icons'; 
 
-export default function LoginScreen() {
+export default function LoginScreen({ navigation}) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [secureText, setSecureText] = useState(true);
 
+  const handleSignIn = async () => {
+    try {
+      await signInWithEmailAndPassword(auth, email.trim(), password);
+      navigation.navigate('NewsFeedScreen');
+    } catch (error) {
+      console.error('Sign in failed:', error.message);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
-      <TouchableOpacity style={styles.backButton}>
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
         <Ionicons name="chevron-back-outline" size={25} color="white" style={{ marginTop: 30 }} />
       </TouchableOpacity>
 
@@ -41,7 +53,7 @@ export default function LoginScreen() {
         <Text style={styles.forgotText}>Forgot Password?</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.loginButton}>
+      <TouchableOpacity style={styles.loginButton} onPress={handleSignIn}>
         <Text style={styles.loginText}>Login</Text>
       </TouchableOpacity>
     </SafeAreaView>
