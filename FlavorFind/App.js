@@ -8,6 +8,7 @@ import { auth } from './firebaseConfig';
 
 import SignInScreen from './screens/SignInScreen';
 import SignUpScreen from './screens/SignUpScreen';
+import WelcomeScreen from './screens/WelcomeScreen';
 import NewsFeedScreen from './screens/NewsFeedScreen';
 import AiRecipeScreen from './screens/AiRecipeScreen';
 import CreatePostScreen from './screens/CreatePostScreen';
@@ -43,8 +44,11 @@ function AiRecipeNavigator() {
 function AuthStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Welcome" component={WelcomeScreen} />
       <Stack.Screen name="SignIn" component={SignInScreen} />
       <Stack.Screen name="SignUp" component={SignUpScreen} />
+      {/* <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+      <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} /> */}
     </Stack.Navigator>
   );
 }
