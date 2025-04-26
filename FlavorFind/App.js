@@ -4,9 +4,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { ActivityIndicator, View, StyleSheet } from 'react-native';
 import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from './firebaseConfig'; // Import your firebase config
+import { auth } from './firebaseConfig';
 
-// Import your screen components (create these files later)
 import SignInScreen from './screens/SignInScreen';
 import SignUpScreen from './screens/SignUpScreen';
 import NewsFeedScreen from './screens/NewsFeedScreen';
@@ -14,13 +13,11 @@ import AiRecipeScreen from './screens/AiRecipeScreen';
 import CreatePostScreen from './screens/CreatePostScreen';
 import SavedRecipesScreen from './screens/SavedRecipesScreen';
 import AccountScreen from './screens/AccountScreen';
-// You might need an intermediate screen for the AI form -> results flow
 import AiRecipeFormScreen from './screens/AiRecipeFormScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-// Main App Tabs (shown after login)
 function AppTabs() {
   return (
     <Tab.Navigator screenOptions={{ headerShown: false }}>
@@ -33,7 +30,6 @@ function AppTabs() {
   );
 }
 
-// Separate Navigator for AI flow within the tab
 const AiStack = createNativeStackNavigator();
 function AiRecipeNavigator() {
     return (
@@ -44,8 +40,6 @@ function AiRecipeNavigator() {
     );
 }
 
-
-// Auth Stack (shown when logged out)
 function AuthStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -59,7 +53,6 @@ export default function App() {
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState(null);
 
-  // Handle user state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
@@ -68,12 +61,10 @@ export default function App() {
       }
     });
 
-    // Cleanup subscription on unmount
     return unsubscribe;
   }, []);
 
   if (initializing) {
-    // You can show a splash screen or loading indicator here
     return (
       <View style={styles.container}>
         <ActivityIndicator size="large" />
