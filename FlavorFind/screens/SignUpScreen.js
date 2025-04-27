@@ -17,6 +17,7 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from '../firebaseConfig';
 import LogoText from '../components/LogoText';
+
 export default function SignUpScreen({ navigation }) {
   const [username, setUsername] = useState('');
   const [email, setEmail]       = useState('');
@@ -46,7 +47,6 @@ export default function SignUpScreen({ navigation }) {
         createdAt: serverTimestamp(),
         isBanned: false,
       });
-      // onAuthStateChanged listener should navigate you onward
     } catch (err) {
       console.error(err);
       let msg = 'Sign up failed.';

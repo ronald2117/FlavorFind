@@ -5,8 +5,8 @@ import Svg, { Path, G, Defs } from "react-native-svg"
 function LogoText(props) {
   return (
     <Svg
-      width={props.width || 274}
-      height={props.width || 86}
+      width={props.width || 220}
+      height={props.height || 86}
       viewBox="0 0 274 86"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

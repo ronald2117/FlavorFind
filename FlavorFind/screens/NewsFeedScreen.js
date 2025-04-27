@@ -1,26 +1,35 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons'; 
+
+import LogoText from '../components/LogoText';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const NewsFeedScreen = () => {
     return (
-        <View style={styles.container}>
-            <Text style={styles.text}>Welcome to the News Feed!</Text>
-        </View>
+        <SafeAreaView style={styles.container}>
+            <View style={styles.header}>
+                <LogoText/>
+                <Ionicons name="search" size={24} color="white" style={styles.searchIcon}/>
+            </View> 
+        </SafeAreaView>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        justifyContent: 'center',
+        backgroundColor: '#000',
+        height: '100%',
+    },
+    header: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
         alignItems: 'center',
-        backgroundColor: '#fff',
+        padding: 10,
     },
-    text: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#333',
-    },
+    searchIcon: {
+        marginRight: 15,
+    }
 });
 
 export default NewsFeedScreen;
