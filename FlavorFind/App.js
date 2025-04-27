@@ -15,19 +15,14 @@ import CreatePostScreen from './screens/CreatePostScreen';
 import SavedRecipesScreen from './screens/SavedRecipesScreen';
 import AccountScreen from './screens/AccountScreen';
 import AiRecipeFormScreen from './screens/AiRecipeFormScreen';
+import BottomTabs from './components/BottomTabs';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 function AppTabs() {
   return (
-    <Tab.Navigator screenOptions={{ headerShown: false }}>
-      <Tab.Screen name="Feed" component={NewsFeedScreen} /* options={{ tabBarIcon: ... }} */ />
-      <Tab.Screen name="AI Recipe" component={AiRecipeNavigator} /* options={{ tabBarIcon: ... }} */ />
-      <Tab.Screen name="Create" component={CreatePostScreen} /* options={{ tabBarIcon: ... }} */ />
-      <Tab.Screen name="Saved" component={SavedRecipesScreen} /* options={{ tabBarIcon: ... }} */ />
-      <Tab.Screen name="Account" component={AccountScreen} /* options={{ tabBarIcon: ... }} */ />
-    </Tab.Navigator>
+    <BottomTabs/>
   );
 }
 
