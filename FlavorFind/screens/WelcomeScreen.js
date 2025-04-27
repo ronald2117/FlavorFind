@@ -6,7 +6,7 @@ const WelcomeScreen = ({ navigation }) => {
     return (
         <View style={styles.container}>
             <View style={styles.logoContainer}>
-                <Logo width={280} height={300} />
+                <Logo width={250} height={250} />
             </View>
             <View style={styles.buttonContainer}>
                 <View style={styles.buttonWrapper}>
@@ -39,8 +39,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        marginLeft: 70,
-        marginTop: 80,
+        marginTop: 50,
     },
     buttonContainer: {
         padding: 20,
