@@ -1,11 +1,13 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 
-const AiRecipeScreen = () => {
+const AiRecipeResultScreen = () => {
+    const { recipe } = route.params;
+
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>AI Recipe Screen</Text>
-        </View>
+        <ScrollView contentContainerStyle={{ padding: 16 }}>
+            <Text>{recipe}</Text>
+        </ScrollView>
     );
 };
 
@@ -23,4 +25,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default AiRecipeScreen;
+export default AiRecipeResultScreen;

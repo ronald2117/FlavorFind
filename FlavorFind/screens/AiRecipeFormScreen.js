@@ -4,6 +4,7 @@ import FlavorBotLogoWithText from '../components/FlavorBotLogoWithText';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
 
 const AiRecipeFormScreen = () => {
     const [budget, setBudget] = useState('');
@@ -14,16 +15,41 @@ const AiRecipeFormScreen = () => {
     const [cookingMethod, setCookingMethod] = useState('');
     const navigation = useNavigation();
 
-    const handleSubmit = () => {
-        navigation.navigate('Result', {
-          budget,
-          ingredients,
-          preferences,
-          dishType,
-          mealTime,
-          cookingMethod,
-        });
-      };
+    const generateRecipe = async () => {
+        const prompt = `
+    You are a professional chef and recipe creator. Your goal is to generate a detailed and delicious recipe based on the user's input.
+    
+    Here is the user's input:
+    - Budget: $${budget}
+    - Ingredients available: ${ingredients}
+    - Preferences: ${preferences}
+    - Dish type: ${dishType}
+    - Mealtime: ${mealTime}
+    - Cooking method: ${cookingMethod}
+    
+    Instructions:
+    1. Suggest a recipe that matches the budget, ingredients, and preferences.
+    2. Give a name to the dish.
+    3. List all ingredients needed (including quantities).
+    4. Provide step-by-step cooking instructions.
+    5. Optionally, include tips or suggestions (like substitutions or garnish ideas).
+    
+    Make sure the recipe is realistic, budget-conscious, and appealing to the user.
+        `;
+        try {
+            const response = await axios.post(
+                'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=AIzaSyCmYQzfneMUum4DZ5nLCT6p1Yp9-rbdwdA',
+                {
+                    contents: [{ parts: [{ text: prompt }] }],
+                }
+            );
+
+            const recipe = response.data.candidates[0]?.content?.parts[0]?.text || "No recipe found.";
+            navigation.navigate('AiResult', { recipe });
+        } catch (error) {
+            console.error('Error fetching recipe:', error);
+        }
+    };
 
     return (
         <SafeAreaView style={styles.container}>
@@ -101,7 +127,7 @@ const AiRecipeFormScreen = () => {
                     />
                 </View>
                 <View style={styles.inputGroup}>
-                    <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+                    <TouchableOpacity style={styles.button} onPress={generateRecipe}>
                         <Text style={styles.buttonText}>Generate Recipe</Text>
                     </TouchableOpacity>
                 </View>

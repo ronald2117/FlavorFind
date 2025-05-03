@@ -9,12 +9,6 @@ import { auth } from './firebaseConfig';
 import SignInScreen from './screens/SignInScreen';
 import SignUpScreen from './screens/SignUpScreen';
 import WelcomeScreen from './screens/WelcomeScreen';
-import NewsFeedScreen from './screens/NewsFeedScreen';
-import AiRecipeScreen from './screens/AiRecipeScreen';
-import CreatePostScreen from './screens/CreatePostScreen';
-import SavedRecipesScreen from './screens/SavedRecipesScreen';
-import AccountScreen from './screens/AccountScreen';
-import AiRecipeFormScreen from './screens/AiRecipeFormScreen';
 import BottomTabs from './components/BottomTabs';
 
 const Stack = createNativeStackNavigator();
@@ -26,15 +20,7 @@ function AppTabs() {
   );
 }
 
-const AiStack = createNativeStackNavigator();
-function AiRecipeNavigator() {
-    return (
-        <AiStack.Navigator screenOptions={{ headerShown: false }}>
-            <AiStack.Screen name="AiForm" component={AiRecipeFormScreen} />
-            <AiStack.Screen name="AiResult" component={AiRecipeScreen} />
-        </AiStack.Navigator>
-    );
-}
+
 
 function AuthStack() {
   return (
