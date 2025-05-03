@@ -13,7 +13,7 @@ export default function LoginScreen({ navigation}) {
   const handleSignIn = async () => {
     try {
       await signInWithEmailAndPassword(auth, email.trim(), password);
-      navigation.navigate('NewsFeedScreen');
+      // navigation.navigate('NewsFeedScreen');
     } catch (error) {
       console.error('Sign in failed:', error.message);
     }
