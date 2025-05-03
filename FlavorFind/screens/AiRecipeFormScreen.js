@@ -38,17 +38,25 @@ const AiRecipeFormScreen = () => {
         `;
         try {
             const response = await axios.post(
-                'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=AIzaSyCmYQzfneMUum4DZ5nLCT6p1Yp9-rbdwdA',
-                {
-                    contents: [{ parts: [{ text: prompt }] }],
-                }
+              'https://api.groq.com/openai/v1/chat/completions',
+              {
+                model: 'llama-3.3-70b-versatile',
+                messages: [{ role: 'user', content: prompt }],
+                temperature: 0.7,
+              },
+              {
+                headers: {
+                  'Authorization': `Bearer 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`,
+                  'Content-Type': 'application/json',
+                },
+              }
             );
-
-            const recipe = response.data.candidates[0]?.content?.parts[0]?.text || "No recipe found.";
+        
+            const recipe = response.data.choices[0].message.content;
             navigation.navigate('AiResult', { recipe });
-        } catch (error) {
-            console.error('Error fetching recipe:', error);
-        }
+          } catch (error) {
+            console.error('Error fetching recipe from Groq:', error);
+          }
     };
 
     return (
@@ -136,6 +144,17 @@ const AiRecipeFormScreen = () => {
     );
 };
 
+const AiRecipeResultScreen = ({ route }) => {
+    const { recipe } = route.params; // Access the 'recipe' parameter passed from AiRecipeFormScreen
+
+    return (
+        <ScrollView contentContainerStyle={resultStyles.container}>
+            <Text style={resultStyles.title}>Generated Recipe</Text>
+            <Text style={resultStyles.recipeText}>{recipe}</Text>
+        </ScrollView>
+    );
+};
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -183,4 +202,23 @@ const styles = StyleSheet.create({
     },
 });
 
+const resultStyles = StyleSheet.create({
+    container: {
+        padding: 20,
+        backgroundColor: '#000',
+    },
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#fff',
+        marginBottom: 20,
+    },
+    recipeText: {
+        fontSize: 16,
+        color: '#fff',
+        lineHeight: 24,
+    },
+});
+
 export default AiRecipeFormScreen;
+export { AiRecipeResultScreen };

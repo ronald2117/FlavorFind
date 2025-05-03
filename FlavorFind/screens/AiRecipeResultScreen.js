@@ -1,8 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 
-const AiRecipeResultScreen = () => {
-    const { recipe } = route.params;
+const AiRecipeResultScreen = ({ recipe }) => {
 
     return (
         <ScrollView contentContainerStyle={{ padding: 16 }}>
@@ -16,7 +15,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#fff',
+        backgroundColor: '#000',
     },
     title: {
         fontSize: 24,
