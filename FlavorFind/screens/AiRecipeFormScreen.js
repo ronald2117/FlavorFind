@@ -53,6 +53,7 @@ const AiRecipeFormScreen = () => {
             );
         
             const recipe = response.data.choices[0].message.content;
+            console.log('Generated Recipe from form page:', recipe);
             navigation.navigate('AiResult', { recipe });
           } catch (error) {
             console.error('Error fetching recipe from Groq:', error);
