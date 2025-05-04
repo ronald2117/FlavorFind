@@ -20,7 +20,7 @@ const AiRecipeFormScreen = () => {
     You are a professional chef and recipe creator. Your goal is to generate a detailed and delicious recipe based on the user's input.
     
     Here is the user's input:
-    - Budget: $${budget}
+    - Budget: ₱${budget}.
     - Ingredients available: ${ingredients}
     - Preferences: ${preferences}
     - Dish type: ${dishType}
@@ -33,6 +33,7 @@ const AiRecipeFormScreen = () => {
     3. List all ingredients needed (including quantities).
     4. Provide step-by-step cooking instructions.
     5. Optionally, include tips or suggestions (like substitutions or garnish ideas).
+    6. Talk to the user in a friendly and engaging manner.
     
     Make sure the recipe is realistic, budget-conscious, and appealing to the user.
         `;
@@ -53,7 +54,6 @@ const AiRecipeFormScreen = () => {
             );
         
             const recipe = response.data.choices[0].message.content;
-            console.log('Generated Recipe from form page:', recipe);
             navigation.navigate('AiResult', { recipe });
           } catch (error) {
             console.error('Error fetching recipe from Groq:', error);
