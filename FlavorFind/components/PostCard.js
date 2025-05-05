@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 15,
     lineHeight: 20,
-    marginBottom: 15,
+    marginTop: 5,
     color: '#fff',
     flexWrap: 'wrap', 
     width: '100%',
