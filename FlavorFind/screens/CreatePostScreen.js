@@ -1,14 +1,27 @@
-// screens/CreatePostScreen.js
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, Image, StyleSheet, Alert, ActivityIndicator, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  Image,
+  StyleSheet,
+  Alert,
+  ActivityIndicator,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableOpacity,
+} from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { db, storage, auth } from '../firebaseConfig'; // Import auth
+import { db, storage, auth } from '../firebaseConfig';
 import { useNavigation } from '@react-navigation/native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-const CreatePostScreen = () => {
-  console.log(auth);
+const MAX_CHAR = 500;
+
+export default function CreatePostScreen() {
   const [text, setText] = useState('');
   const [imageUri, setImageUri] = useState(null);
   const [uploading, setUploading] = useState(false);
@@ -16,182 +29,191 @@ const CreatePostScreen = () => {
   const navigation = useNavigation();
 
   const pickImage = async () => {
-    // Ask for permission
-    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (permissionResult.granted === false) {
-      Alert.alert("Permission Required", "You need to allow access to your photos to upload an image.");
-      return;
+    const { granted } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!granted) {
+      return Alert.alert('Permission Required', 'Allow photo access to upload an image.');
     }
-
-    let result = await ImagePicker.launchImageLibraryAsync({
+    const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      aspect: [4, 3], // Or your desired aspect ratio
-      quality: 0.7, // Adjust quality for faster uploads
+      aspect: [4, 3],
+      quality: 0.7,
     });
-
-    if (!result.canceled) {
-      setImageUri(result.assets[0].uri);
-    }
+    if (!result.canceled) setImageUri(result.assets[0].uri);
   };
 
   const uploadImageAsync = async (uri) => {
-    // Why are we using XMLHttpRequest? See:
-    // https://github.com/expo/expo/issues/2402#issuecomment-443726662
     const blob = await new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
-      xhr.onload = function () {
-        resolve(xhr.response);
-      };
-      xhr.onerror = function (e) {
-        console.error(e);
-        reject(new TypeError("Network request failed"));
-      };
-      xhr.responseType = "blob";
-      xhr.open("GET", uri, true);
+      xhr.onload = () => resolve(xhr.response);
+      xhr.onerror = () => reject(new TypeError('Network request failed'));
+      xhr.responseType = 'blob';
+      xhr.open('GET', uri, true);
       xhr.send(null);
     });
-
     const fileRef = ref(storage, `posts/${auth.currentUser.uid}/${Date.now()}.jpg`);
     const uploadTask = uploadBytesResumable(fileRef, blob);
 
     return new Promise((resolve, reject) => {
-        uploadTask.on('state_changed',
-            (snapshot) => {
-                const prog = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-                setProgress(prog); // Update progress state
-                console.log('Upload is ' + prog + '% done');
-            },
-            (error) => {
-                console.error("Upload error:", error);
-                blob.close(); // Close the blob resource
-                reject(error);
-            },
-            async () => {
-                // Upload completed successfully, now we can get the download URL
-                const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-                blob.close(); // Close the blob resource
-                resolve(downloadURL);
-            }
-        );
+      uploadTask.on(
+        'state_changed',
+        snapshot => {
+          const pct = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+          setProgress(pct);
+        },
+        error => {
+          blob.close();
+          reject(error);
+        },
+        async () => {
+          const url = await getDownloadURL(uploadTask.snapshot.ref);
+          blob.close();
+          resolve(url);
+        }
+      );
     });
   };
 
-
-  const handlePostSubmit = async () => {
-    if (!text && !imageUri) {
-      Alert.alert("Empty Post", "Please add some text or an image.");
-      return;
+  const handleSubmit = async () => {
+    if (!text.trim() && !imageUri) {
+      return Alert.alert('Empty Post', 'Add text or an image to create a post.');
     }
     if (!auth.currentUser) {
-        Alert.alert("Not Logged In", "You must be logged in to post.");
-        // Potentially navigate to login screen
-        return;
+      return Alert.alert('Not Logged In', 'Please log in to create a post.');
     }
 
     setUploading(true);
-    let imageUrl = null;
-
     try {
-      // Upload image if selected
-      if (imageUri) {
-         console.log("Uploading image...");
-         imageUrl = await uploadImageAsync(imageUri);
-         console.log("Image uploaded:", imageUrl);
-      }
+      let imageUrl = null;
+      if (imageUri) imageUrl = await uploadImageAsync(imageUri);
 
-      // Add post data to Firestore
       const postData = {
         userId: auth.currentUser.uid,
-        // TODO: Get username from user profile or auth state
         username: auth.currentUser.displayName || 'Anonymous',
-        text: text,
-        imageUrl: imageUrl, // null if no image
-        createdAt: serverTimestamp(), // Use server timestamp
-        likes: {},
-        saves: {},
+        text: text.trim(),
+        imageUrl,
+        createdAt: serverTimestamp(),
         likeCount: 0,
         commentCount: 0,
       };
+      await addDoc(collection(db, 'posts'), postData);
 
-      console.log("Adding document to Firestore with data:", postData);
-      const docRef = await addDoc(collection(db, 'posts'), postData);
-      console.log("Document written with ID: ", docRef.id);
-
-      setUploading(false);
+      Alert.alert('Success', 'Your recipe post has been created!');
       setText('');
       setImageUri(null);
       setProgress(0);
-      Alert.alert("Success", "Your recipe post has been created!");
-      navigation.goBack(); // Go back to the feed
-
+      navigation.goBack();
     } catch (error) {
-      console.error("Error creating post: ", error);
+      console.error(error);
+      Alert.alert('Error', 'Could not create post. Please try again.');
+    } finally {
       setUploading(false);
-      setProgress(0);
-      Alert.alert("Error", "Could not create post. Please try again.");
     }
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.label}>Recipe Details / Description:</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Share your recipe steps, ingredients, story..."
-        value={text}
-        onChangeText={setText}
-        multiline
-      />
+    <SafeAreaView style={styles.safe}>
+      <KeyboardAvoidingView
+        style={styles.flex}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
+        <ScrollView contentContainerStyle={styles.container}>
+          <Text style={styles.title}>New Recipe Post</Text>
 
-      <Button title="Pick an image from camera roll" onPress={pickImage} disabled={uploading}/>
-      {imageUri && <Image source={{ uri: imageUri }} style={styles.imagePreview} />}
+          <Text style={styles.label}>Description</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Share your recipe..."
+            placeholderTextColor="#888"
+            value={text}
+            onChangeText={t => t.length <= MAX_CHAR && setText(t)}
+            multiline
+            selectionColor="#B8860B"
+          />
+          <Text style={styles.charCount}>{text.length}/{MAX_CHAR}</Text>
 
-      {uploading && (
-        <View style={styles.progressContainer}>
-          <Text>Uploading: {progress}%</Text>
-          <ActivityIndicator size="large" color="#0000ff" />
-        </View>
-      )}
+          <TouchableOpacity
+            style={[styles.button, styles.imageButton]}
+            onPress={pickImage}
+            disabled={uploading}
+          >
+            <Text style={styles.buttonText}>Select Image</Text>
+          </TouchableOpacity>
 
-      <Button title={uploading ? "Posting..." : "Create Post"} onPress={handlePostSubmit} disabled={uploading} />
-    </ScrollView>
+          {imageUri ? (
+            <View style={styles.imageWrapper}>
+              <Image source={{ uri: imageUri }} style={styles.imagePreview} />
+              <TouchableOpacity
+                style={styles.removeButton}
+                onPress={() => setImageUri(null)}
+              >
+                <Text style={styles.removeText}>Remove</Text>
+              </TouchableOpacity>
+            </View>
+          ) : null}
+
+          {uploading && (
+            <View style={styles.progressContainer}>
+              <View style={styles.progressBarBackground}>
+                <View style={[styles.progressBarFill, { width: `${progress}%` }]} />
+              </View>
+              <Text style={styles.progressText}>{progress}%</Text>
+            </View>
+          )}
+
+          <TouchableOpacity
+            style={[styles.button, styles.postButton, uploading && styles.buttonDisabled]}
+            onPress={handleSubmit}
+            disabled={uploading}
+          >
+            {uploading ? <ActivityIndicator color="#fff"/> : <Text style={styles.buttonText}>Post</Text>}
+          </TouchableOpacity>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    padding: 20,
-    backgroundColor: '#fff',
-  },
-  label: {
-    fontSize: 16,
-    marginBottom: 5,
-    fontWeight: 'bold',
-  },
+  safe: { flex: 1, backgroundColor: '#000' },
+  flex: { flex: 1 },
+  container: { padding: 20, flexGrow: 1, justifyContent: 'flex-start' },
+  title: { fontSize: 24, fontWeight: '700', marginBottom: 20, color: '#fff' },
+  label: { fontSize: 16, fontWeight: '600', marginBottom: 8, color: '#fff' },
   input: {
     borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 15,
-    fontSize: 15,
-    minHeight: 100, // Make text area larger
-    textAlignVertical: 'top', // Align text to top for multiline
+    borderColor: '#555',
+    borderRadius: 8,
+    padding: 12,
+    fontSize: 16,
+    backgroundColor: '#222',
+    color: '#fff',
+    minHeight: 100,
+    textAlignVertical: 'top',
   },
-  imagePreview: {
+  charCount: { textAlign: 'right', marginBottom: 15, color: '#aaa' },
+  button: {
+    paddingVertical: 14,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  imageButton: { backgroundColor: '#B8860B' },
+  postButton: { backgroundColor: '#8B0000' },
+  buttonDisabled: { backgroundColor: '#555' },
+  buttonText: { color: '#fff', fontSize: 16, fontWeight: '600' },
+  imageWrapper: { marginVertical: 15, alignItems: 'center' },
+  imagePreview: { width: '100%', height: 200, borderRadius: 8 },
+  removeButton: { marginTop: 8 },
+  removeText: { color: '#FF6347', fontSize: 14 },
+  progressContainer: { marginVertical: 15, alignItems: 'center' },
+  progressBarBackground: {
     width: '100%',
-    height: 200,
-    resizeMode: 'contain',
-    marginVertical: 15,
-    borderWidth: 1,
-    borderColor: '#eee',
+    height: 10,
+    backgroundColor: '#444',
+    borderRadius: 5,
+    overflow: 'hidden',
   },
-  progressContainer: {
-      alignItems: 'center',
-      marginVertical: 15,
-  }
+  progressBarFill: { height: 10, backgroundColor: '#B8860B' },
+  progressText: { marginTop: 5, color: '#fff' },
 });
-
-export default CreatePostScreen;
