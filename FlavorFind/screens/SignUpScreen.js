@@ -13,7 +13,7 @@ import {
   SafeAreaView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from '../firebaseConfig';
 import LogoText from '../components/LogoText';
@@ -47,6 +47,11 @@ export default function SignUpScreen({ navigation }) {
         createdAt: serverTimestamp(),
         isBanned: false,
       });
+
+      await updateProfile(cred.user, {
+        displayName: username.trim(),
+      });
+
     } catch (err) {
       console.error(err);
       let msg = 'Sign up failed.';

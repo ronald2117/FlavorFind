@@ -10,6 +10,7 @@ import CreatePostScreen from '../screens/CreatePostScreen';
 import SavedRecipesScreen from '../screens/SavedRecipesScreen';
 import AccountScreen from '../screens/AccountScreen';
 import FlavorBotLogo from './FlavorBotLogo';
+import ViewPostScreen from '../screens/ViewPostScreen';
 
 const AiStack = createNativeStackNavigator();
 function AiRecipeNavigator() {
@@ -20,6 +21,17 @@ function AiRecipeNavigator() {
         </AiStack.Navigator>
     );
 }
+
+const FeedStack = createNativeStackNavigator();
+function PostNavigator() {
+    return (
+        <FeedStack.Navigator screenOptions={{ headerShown: false }}>
+            <FeedStack.Screen name="NewsFeed" component={NewsFeedScreen} />
+            <FeedStack.Screen name="ViewPost" component={ViewPostScreen} />
+        </FeedStack.Navigator>
+    );
+}
+
 
 const Tab = createBottomTabNavigator();
 
@@ -42,7 +54,7 @@ export default function BottomTabs() {
     >
       <Tab.Screen 
         name="Feed" 
-        component={NewsFeedScreen}
+        component={PostNavigator}
         options={{
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="home-outline" size={24} color={color} />

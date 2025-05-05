@@ -1,91 +1,112 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, Image, StyleSheet } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { db } from '../firebaseConfig';
-import { collection, getDocs } from 'firebase/firestore';
+import React, { useState, useEffect } from 'react';
+import { View, FlatList, StyleSheet, Text, Button } from 'react-native';
+import { collection, getDocs, query, orderBy, doc, getDoc } from 'firebase/firestore';
+import { db, auth } from '../firebaseConfig';
+import PostCard from '../components/PostCard';
+import { useNavigation, useIsFocused } from '@react-navigation/native';
 
-import LogoText from '../components/LogoText';
-import { SafeAreaView } from 'react-native-safe-area-context';
+const FeedScreen = () => {
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigation = useNavigation();
+  const isFocused = useIsFocused(); 
 
-const NewsFeedScreen = () => {
-    const [posts, setPosts] = useState([]);
-    const [postText, setPostText] = useState('');
+  const fetchPosts = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const postsQuery = query(collection(db, 'posts'), orderBy('createdAt', 'desc'));
+      const querySnapshot = await getDocs(postsQuery);
+      const postsData = await Promise.all(querySnapshot.docs.map(async (postDoc) => {
+        const postData = postDoc.data();
+        let username = postData.username;
+        if (!username && postData.userId) {
+           try {
+             const userRef = doc(db, 'users', postData.userId);
+             const userSnap = await getDoc(userRef);
+             if (userSnap.exists()) {
+               username = userSnap.data().username || 'Unknown User';
+             }
+           } catch (userError) {
+             console.warn(`Could not fetch user data for post ${postDoc.id}:`, userError);
+           }
+        }
 
-    useEffect(() => {
-        const fetchPosts = async () => {
-            const snapshot = await getDocs(collection(db, 'posts'));
-            const postList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            setPosts(postList);
+        return {
+          id: postDoc.id,
+          ...postData,
+          username: username || 'Anonymous',
         };
+      }));
+      setPosts(postsData);
+    } catch (err) {
+      console.error("Error fetching posts: ", err);
+      setError("Failed to load posts. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
+    if (isFocused) { // Refetch posts when the screen comes into focus
         fetchPosts();
-    }, []);
+    }
+  }, [isFocused]); // Dependency array includes isFocused
 
-    const createPost = async () => {
-        if (!postText.trim()) return;
-        await addDoc(collection(db, 'posts'), {
-            username: 'username', // Replace with real user
-            text: postText,
-            steps: [],
-            hashtags: [],
-            imageUrl: '',
-            likes: 0,
-            comments: 0,
-            createdAt: serverTimestamp()
-        });
-        setPostText('');
-    };
+  const handleNavigateToComments = (postId) => {
+    navigation.navigate('Comments', { postId });
+  };
 
-    const renderItem = ({ item }) => (
-        <View style={styles.post}>
-            <Text style={styles.username}>{item.username}</Text>
-            <Text style={styles.text}>{item.text}</Text>
-            {item.imageUrl ? <Image source={{ uri: item.imageUrl }} style={styles.image} /> : null}
-            {item.steps && item.steps.map((step, i) => <Text key={i}>• {step}</Text>)}
-            <Text style={styles.hashtags}>{item.hashtags?.join(' ')}</Text>
-            <Text style={styles.meta}>❤️ {item.likes}   💬 {item.comments}</Text>
-        </View>
-    );
+  const handleLike = (postId) => { console.log('Like:', postId); /* Add Firestore update */ };
+  const handleShare = (postId) => { console.log('Share:', postId); /* Add Share logic */ };
+  const handleSave = (postId) => { console.log('Save:', postId); /* Add Firestore update */ };
 
-    return (
-        <SafeAreaView style={styles.container}>
-            <View style={styles.header}>
-                <LogoText />
-                <Ionicons name="search" size={24} color="white" style={styles.searchIcon} />
-            </View>
-            <View style={{ flex: 1 }}>
+  if (loading) {
+    return <View style={styles.centered}><Text>Loading feed...</Text></View>;
+  }
 
-                {/* Feed */}
-                <FlatList
-                    data={posts}
-                    renderItem={renderItem}
-                    keyExtractor={item => item.id}
-                />
-            </View>
-        </SafeAreaView>
-    );
+  if (error) {
+    return <View style={styles.centered}><Text>{error}</Text></View>;
+  }
+
+  return (
+    <View style={styles.container}>
+       <Button title="Create New Post" onPress={() => navigation.navigate('CreatePost')} />
+      <FlatList
+        data={posts}
+        renderItem={({ item }) => (
+          <PostCard
+            post={item}
+            onCommentPress={() => handleNavigateToComments(item.id)}
+            onLikePress={() => handleLike(item.id)} // Pass handlers
+            onSharePress={() => handleShare(item.id)}
+            onSavePress={() => handleSave(item.id)}
+            currentUserId={auth.currentUser?.uid} // Pass current user ID
+          />
+        )}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.listContent}
+        onRefresh={fetchPosts} // Add pull-to-refresh
+        refreshing={loading} // Show refresh indicator while loading
+      />
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        backgroundColor: '#000',
-        height: '100%',
-    },
-    header: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: 10,
-    },
-    searchIcon: {
-        marginRight: 15,
-    },
-    post: { padding: 15, borderBottomWidth: 1, borderColor: '#eee' },
-    username: { fontWeight: 'bold', marginBottom: 5 },
-    text: { marginBottom: 5 },
-    image: { height: 200, borderRadius: 10, marginBottom: 10 },
-    hashtags: { color: '#888' },
-    meta: { color: '#999', fontSize: 12 }
+  container: {
+    flex: 1,
+    backgroundColor: '#000000',
+  },
+  centered: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+  },
+  listContent: {
+    paddingBottom: 20, // Add some padding at the bottom
+  },
 });
 
-export default NewsFeedScreen;
+export default FeedScreen;

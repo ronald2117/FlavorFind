@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../firebaseConfig'; 
-import { useNavigation } from '@react-navigation/native'; 
+import { signInWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
+import { auth, db } from '../firebaseConfig'; 
 import { Ionicons } from '@expo/vector-icons'; 
 
 export default function LoginScreen({ navigation}) {
@@ -12,8 +12,22 @@ export default function LoginScreen({ navigation}) {
 
   const handleSignIn = async () => {
     try {
-      await signInWithEmailAndPassword(auth, email.trim(), password);
-      // navigation.navigate('NewsFeedScreen');
+      const userCredential = await signInWithEmailAndPassword(auth, email.trim(), password);
+      const user = userCredential.user;
+      const userRef = doc(db, 'users', user.uid); 
+      const userSnap = await getDoc(userRef);
+
+      if (userSnap.exists()) {
+        const username = userSnap.data().username;
+
+        await updateProfile(user, {
+          displayName: username,
+        });
+
+        console.log('Display name updated to:', username);
+      } else {
+        console.warn('No user data found in Firestore for UID:', user.uid);
+      }
     } catch (error) {
       console.error('Sign in failed:', error.message);
     }
