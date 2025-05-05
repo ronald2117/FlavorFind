@@ -1,7 +1,6 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
-import { View, Image } from 'react-native';
 
 import NewsFeedScreen from '../screens/NewsFeedScreen';
 import AiRecipeFormScreen from '../screens/AiRecipeFormScreen';
@@ -10,6 +9,7 @@ import CreatePostScreen from '../screens/CreatePostScreen';
 import SavedRecipesScreen from '../screens/SavedRecipesScreen';
 import AccountScreen from '../screens/AccountScreen';
 import FlavorBotLogo from './FlavorBotLogo';
+import FlavorBotLogoBNW from './FlavorBotLogoBNW';
 import ViewPostScreen from '../screens/ViewPostScreen';
 
 const AiStack = createNativeStackNavigator();
@@ -65,8 +65,8 @@ export default function BottomTabs() {
         name="AI Recipe" 
         component={AiRecipeNavigator}
         options={{
-          tabBarIcon: ({ color, size }) => (
-            <FlavorBotLogo/>
+          tabBarIcon: ({ focused }) => (
+            focused ? <FlavorBotLogo /> : <FlavorBotLogoBNW />
           ),
         }}
       />
