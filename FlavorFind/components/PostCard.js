@@ -60,6 +60,9 @@ const PostCard = ({ post, onCommentPress, onLikePress, onSharePress, onSavePress
 };
 
 const styles = StyleSheet.create({
+  body: {
+    flex: 1
+  },
   card: {
     backgroundColor: '#000',
     borderRadius: 8,
@@ -87,7 +90,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: '100%',
-    height: 250, // Adjust as needed
+    height: 250,
     borderRadius: 8,
     marginBottom: 10,
   },
@@ -96,6 +99,8 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     marginBottom: 15,
     color: '#fff',
+    flexWrap: 'wrap', 
+    width: '100%',
   },
   actions: {
     flexDirection: 'row',

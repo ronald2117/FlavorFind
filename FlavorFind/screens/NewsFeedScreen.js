@@ -72,7 +72,6 @@ const FeedScreen = () => {
 
   return (
     <View style={styles.container}>
-       <Button title="Create New Post" onPress={() => navigation.navigate('CreatePost')} />
       <FlatList
         data={posts}
         renderItem={({ item }) => (
