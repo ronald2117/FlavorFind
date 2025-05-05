@@ -7,6 +7,7 @@ import { useNavigation, useIsFocused } from '@react-navigation/native';
 import LogoText from '../components/LogoText'; 
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import LoadingScreen from './LoadingScreen';
 
 const FeedScreen = () => {
   const [posts, setPosts] = useState([]);
@@ -66,7 +67,7 @@ const FeedScreen = () => {
   const handleSave = (postId) => { console.log('Save:', postId); /* Add Firestore update */ };
 
   if (loading) {
-    return <View style={styles.centered}><Text>Loading feed...</Text></View>;
+    return <LoadingScreen />; // Show loading screen while fetching posts
   }
 
   if (error) {
