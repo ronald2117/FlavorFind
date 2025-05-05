@@ -4,6 +4,9 @@ import { collection, getDocs, query, orderBy, doc, getDoc } from 'firebase/fires
 import { db, auth } from '../firebaseConfig';
 import PostCard from '../components/PostCard';
 import { useNavigation, useIsFocused } from '@react-navigation/native';
+import LogoText from '../components/LogoText'; 
+import { Ionicons } from '@expo/vector-icons';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const FeedScreen = () => {
   const [posts, setPosts] = useState([]);
@@ -71,7 +74,17 @@ const FeedScreen = () => {
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <LogoText />
+        <Ionicons 
+          name="search" 
+          size={30} 
+          color="white" 
+          onPress={() => navigation.navigate('Search')} 
+          style={{ marginRight: 15 }} 
+        />
+      </View>
       <FlatList
         data={posts}
         renderItem={({ item }) => (
@@ -89,7 +102,7 @@ const FeedScreen = () => {
         onRefresh={fetchPosts} // Add pull-to-refresh
         refreshing={loading} // Show refresh indicator while loading
       />
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -97,6 +110,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#000000',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 5,
+    backgroundColor: '#111', // Dark background for header
   },
   centered: {
       flex: 1,
