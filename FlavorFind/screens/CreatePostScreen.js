@@ -98,6 +98,7 @@ export default function CreatePostScreen() {
         createdAt: serverTimestamp(),
         likeCount: 0,
         commentCount: 0,
+        comments: [],
       };
       await addDoc(collection(db, 'posts'), postData);
 

@@ -59,7 +59,7 @@ const FeedScreen = () => {
   }, [isFocused]);
 
   const handleNavigateToComments = (postId) => {
-    navigation.navigate('Comments', { postId });
+    navigation.navigate('ViewPost', { postId });
   };
 
   const handleLike = async (postId) => {
@@ -101,7 +101,7 @@ const FeedScreen = () => {
   };
 
   if (loading) {
-    return <LoadingScreen />; // Show loading screen while fetching posts
+    return <LoadingScreen />;
   }
 
   if (error) {
@@ -134,8 +134,8 @@ const FeedScreen = () => {
         )}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContent}
-        onRefresh={fetchPosts} // Add pull-to-refresh
-        refreshing={loading} // Show refresh indicator while loading
+        onRefresh={fetchPosts} 
+        refreshing={loading}
       />
     </SafeAreaView>
   );
