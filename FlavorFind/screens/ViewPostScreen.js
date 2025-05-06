@@ -86,7 +86,7 @@ const ViewPostScreen = ({ route, navigation }) => {
         <Text style={styles.headerTitle}>Post Details</Text>
       </View>
       {post && (
-        <PostCard post={post} />
+        <PostCard post={post} currentUserId={auth.currentUser?.uid} />
       )}
       <FlatList
         data={comments}
