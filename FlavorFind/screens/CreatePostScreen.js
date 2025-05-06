@@ -13,13 +13,16 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { db, storage, auth } from '../firebaseConfig';
+import { db, auth } from '../firebaseConfig';
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const MAX_CHAR = 500;
+
+// Cloudinary Configuration
+const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/dtt8pyj8o/image/upload'; // Replace YOUR_CLOUD_NAME
+const CLOUDINARY_UPLOAD_PRESET = 'react_native_unsigned'; // Replace YOUR_UPLOAD_PRESET_NAME
 
 export default function CreatePostScreen() {
   const [text, setText] = useState('');
@@ -42,36 +45,34 @@ export default function CreatePostScreen() {
     if (!result.canceled) setImageUri(result.assets[0].uri);
   };
 
-  const uploadImageAsync = async (uri) => {
-    const blob = await new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      xhr.onload = () => resolve(xhr.response);
-      xhr.onerror = () => reject(new TypeError('Network request failed'));
-      xhr.responseType = 'blob';
-      xhr.open('GET', uri, true);
-      xhr.send(null);
+  const uploadImageToCloudinary = async (uri) => {
+    const formData = new FormData();
+    formData.append('file', {
+      uri,
+      type: 'image/jpeg', // Assuming JPEG format
+      name: `upload_${Date.now()}.jpg`,
     });
-    const fileRef = ref(storage, `posts/${auth.currentUser.uid}/${Date.now()}.jpg`);
-    const uploadTask = uploadBytesResumable(fileRef, blob);
+    formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
 
-    return new Promise((resolve, reject) => {
-      uploadTask.on(
-        'state_changed',
-        snapshot => {
-          const pct = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-          setProgress(pct);
+    try {
+      const response = await fetch(CLOUDINARY_URL, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Accept': 'application/json',
         },
-        error => {
-          blob.close();
-          reject(error);
-        },
-        async () => {
-          const url = await getDownloadURL(uploadTask.snapshot.ref);
-          blob.close();
-          resolve(url);
-        }
-      );
-    });
+      });
+
+      const data = await response.json();
+      if (response.ok && data.secure_url) {
+        return data.secure_url; // Return the uploaded image URL
+      } else {
+        throw new Error(data.error?.message || 'Unknown Cloudinary error');
+      }
+    } catch (error) {
+      console.error('Cloudinary Upload Error:', error);
+      throw error;
+    }
   };
 
   const handleSubmit = async () => {
@@ -85,7 +86,9 @@ export default function CreatePostScreen() {
     setUploading(true);
     try {
       let imageUrl = null;
-      if (imageUri) imageUrl = await uploadImageAsync(imageUri);
+      if (imageUri) {
+        imageUrl = await uploadImageToCloudinary(imageUri);
+      }
 
       const postData = {
         userId: auth.currentUser.uid,
@@ -126,7 +129,7 @@ export default function CreatePostScreen() {
             placeholder="Share your recipe..."
             placeholderTextColor="#888"
             value={text}
-            onChangeText={t => t.length <= MAX_CHAR && setText(t)}
+            onChangeText={(t) => t.length <= MAX_CHAR && setText(t)}
             multiline
             selectionColor="#B8860B"
           />
@@ -154,10 +157,8 @@ export default function CreatePostScreen() {
 
           {uploading && (
             <View style={styles.progressContainer}>
-              <View style={styles.progressBarBackground}>
-                <View style={[styles.progressBarFill, { width: `${progress}%` }]} />
-              </View>
-              <Text style={styles.progressText}>{progress}%</Text>
+              <ActivityIndicator size="large" color="#fff" />
+              <Text style={styles.progressText}>Uploading...</Text>
             </View>
           )}
 
@@ -166,7 +167,7 @@ export default function CreatePostScreen() {
             onPress={handleSubmit}
             disabled={uploading}
           >
-            {uploading ? <ActivityIndicator color="#fff"/> : <Text style={styles.buttonText}>Post</Text>}
+            {uploading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Post</Text>}
           </TouchableOpacity>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -207,13 +208,5 @@ const styles = StyleSheet.create({
   removeButton: { marginTop: 8 },
   removeText: { color: '#FF6347', fontSize: 14 },
   progressContainer: { marginVertical: 15, alignItems: 'center' },
-  progressBarBackground: {
-    width: '100%',
-    height: 10,
-    backgroundColor: '#444',
-    borderRadius: 5,
-    overflow: 'hidden',
-  },
-  progressBarFill: { height: 10, backgroundColor: '#B8860B' },
   progressText: { marginTop: 5, color: '#fff' },
 });
