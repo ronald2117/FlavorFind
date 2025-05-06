@@ -1,16 +1,52 @@
-// components/PostCard.js
-import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, Image, StyleSheet, TouchableOpacity, Animated } from 'react-native';
 import DefaultProfilePic from '../components/DefaultProfilePic';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { doc, updateDoc, arrayUnion } from 'firebase/firestore';
+import { db } from '../firebaseConfig';
 
-const PostCard = ({ post, onCommentPress, onLikePress, onSharePress, onSavePress, currentUserId }) => {
-  const isLiked = post.likes && currentUserId ? post.likes[currentUserId] === true : false;
-  const likeCount = post.likeCount || Object.keys(post.likes || {}).length; 
+const PostCard = ({ post, onCommentPress, onSharePress, onSavePress, currentUserId }) => {
+  const [isLiked, setIsLiked] = useState(post.likes?.includes(currentUserId) || false);
+  const [likeCount, setLikeCount] = useState(post.likes?.length || 0);
+  const [scaleValue] = useState(new Animated.Value(1)); 
 
-  const isSaved = post.saves && currentUserId ? post.saves[currentUserId] === true : false;
+  const handleLikePress = async () => {
+    Animated.sequence([
+      Animated.timing(scaleValue, {
+        toValue: 1.5, 
+        duration: 150,
+        useNativeDriver: true,
+      }),
+      Animated.timing(scaleValue, {
+        toValue: 1,
+        duration: 150,
+        useNativeDriver: true,
+      }),
+    ]).start();
 
-  const commentCount = post.commentCount || 0; // Default to 0 if commentCount is not provided
+    if (isLiked) {
+      setIsLiked(false);
+      setLikeCount((prev) => prev - 1);
+    } else {
+      setIsLiked(true);
+      setLikeCount((prev) => prev + 1);
+    }
+
+    try {
+      const postRef = doc(db, 'posts', post.id);
+      if (isLiked) {
+        await updateDoc(postRef, {
+          likes: post.likes.filter((id) => id !== currentUserId),
+        });
+      } else {
+        await updateDoc(postRef, {
+          likes: arrayUnion(currentUserId),
+        });
+      }
+    } catch (error) {
+      console.error('Error updating likes:', error);
+    }
+  };
 
   return (
     <View style={styles.card}>
@@ -22,28 +58,33 @@ const PostCard = ({ post, onCommentPress, onLikePress, onSharePress, onSavePress
         )}
         <Text style={styles.text}>{post.text}</Text>
         <View style={styles.actions}>
-          <TouchableOpacity onPress={onLikePress} style={styles.actionButton}>
-            <Icon
-              name={isLiked ? 'heart' : 'heart-outline'}
-              size={24}
-              color={isLiked ? 'red' : '#555'}
-            />
+          <TouchableOpacity onPress={handleLikePress} style={styles.actionButton}>
+            <Animated.View style={{ transform: [{ scale: scaleValue }] }}>
+              <Icon
+                name={isLiked ? 'heart' : 'heart-outline'}
+                size={24}
+                color={isLiked ? 'red' : '#555'}
+              />
+            </Animated.View>
             <Text style={isLiked ? styles.likedText : styles.actionText}>
               {likeCount}
             </Text>
           </TouchableOpacity>
+
           <TouchableOpacity onPress={onCommentPress} style={styles.actionButton}>
             <Icon name="chatbubble-outline" size={20} color="#555" />
-            <Text style={styles.actionText}>{commentCount}</Text>
+            <Text style={styles.actionText}>{post.commentCount || 0}</Text>
           </TouchableOpacity>
+
           <TouchableOpacity onPress={onSharePress} style={styles.actionButton}>
             <Icon name="share-outline" size={20} color="#555" />
           </TouchableOpacity>
+
           <TouchableOpacity onPress={onSavePress} style={[styles.actionButton, styles.saveButton]}>
             <Icon
-              name={isSaved ? 'bookmark' : 'bookmark-outline'}
+              name={post.saves?.includes(currentUserId) ? 'bookmark' : 'bookmark-outline'}
               size={20}
-              color={isSaved ? 'green' : '#555'}
+              color={post.saves?.includes(currentUserId) ? 'green' : '#555'}
             />
           </TouchableOpacity>
         </View>
@@ -54,7 +95,7 @@ const PostCard = ({ post, onCommentPress, onLikePress, onSharePress, onSavePress
 
 const styles = StyleSheet.create({
   body: {
-    flex: 1
+    flex: 1,
   },
   card: {
     backgroundColor: '#000',
@@ -93,7 +134,7 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     marginTop: 5,
     color: '#fff',
-    flexWrap: 'wrap', 
+    flexWrap: 'wrap',
     width: '100%',
   },
   actions: {
@@ -113,17 +154,12 @@ const styles = StyleSheet.create({
   },
   likedText: {
     fontSize: 14,
-    color: 'blue', // Style for liked state
+    color: 'red',
     fontWeight: 'bold',
     marginLeft: 5,
   },
   saveButton: {
     // Add specific styling if needed
-  },
-  savedText: {
-    fontSize: 14,
-    color: 'green', // Style for saved state
-    fontWeight: 'bold',
   },
 });
 

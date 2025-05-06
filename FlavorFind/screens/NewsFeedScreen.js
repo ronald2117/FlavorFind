@@ -53,10 +53,10 @@ const FeedScreen = () => {
   };
 
   useEffect(() => {
-    if (isFocused) { // Refetch posts when the screen comes into focus
+    if (isFocused) { 
       fetchPosts();
     }
-  }, [isFocused]); // Dependency array includes isFocused
+  }, [isFocused]);
 
   const handleNavigateToComments = (postId) => {
     navigation.navigate('Comments', { postId });
@@ -72,13 +72,11 @@ const FeedScreen = () => {
         const currentUserId = auth.currentUser?.uid;
 
         if (postData.likes && postData.likes.includes(currentUserId)) {
-          // Unlike the post
           await updateDoc(postRef, {
             likes: postData.likes.filter((id) => id !== currentUserId),
           });
           console.log(`Post ${postId} unliked.`);
         } else {
-          // Like the post
           await updateDoc(postRef, {
             likes: arrayUnion(currentUserId),
           });
@@ -128,10 +126,10 @@ const FeedScreen = () => {
           <PostCard
             post={item}
             onCommentPress={() => handleNavigateToComments(item.id)}
-            onLikePress={() => handleLike(item.id)} // Pass handlers
+            onLikePress={() => handleLike(item.id)} 
             onSharePress={() => handleShare(item.id)}
             onSavePress={() => handleSave(item.id)}
-            currentUserId={auth.currentUser?.uid} // Pass current user ID
+            currentUserId={auth.currentUser?.uid}
           />
         )}
         keyExtractor={(item) => item.id}
