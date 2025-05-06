@@ -62,7 +62,33 @@ const FeedScreen = () => {
     navigation.navigate('Comments', { postId });
   };
 
-  const handleLike = (postId) => { console.log('Like:', postId); /* Add Firestore update */ };
+  const handleLike = async (postId) => {
+    try {
+      const postRef = doc(db, 'posts', postId);
+      const postSnap = await getDoc(postRef);
+
+      if (postSnap.exists()) {
+        const postData = postSnap.data();
+        const currentUserId = auth.currentUser?.uid;
+
+        if (postData.likes && postData.likes.includes(currentUserId)) {
+          // Unlike the post
+          await updateDoc(postRef, {
+            likes: postData.likes.filter((id) => id !== currentUserId),
+          });
+          console.log(`Post ${postId} unliked.`);
+        } else {
+          // Like the post
+          await updateDoc(postRef, {
+            likes: arrayUnion(currentUserId),
+          });
+          console.log(`Post ${postId} liked.`);
+        }
+      }
+    } catch (error) {
+      console.error('Error liking post:', error);
+    }
+  };
   const handleShare = (postId) => { console.log('Share:', postId); /* Add Share logic */ };
   const handleSave = async (postId) => {
     try {

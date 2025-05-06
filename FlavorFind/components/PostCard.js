@@ -5,9 +5,8 @@ import DefaultProfilePic from '../components/DefaultProfilePic';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 const PostCard = ({ post, onCommentPress, onLikePress, onSharePress, onSavePress, currentUserId }) => {
-  // Check if the current user has liked the post
   const isLiked = post.likes && currentUserId ? post.likes[currentUserId] === true : false;
-  const likeCount = post.likeCount || Object.keys(post.likes || {}).length; // Use likeCount if available
+  const likeCount = post.likeCount || Object.keys(post.likes || {}).length; 
 
   const isSaved = post.saves && currentUserId ? post.saves[currentUserId] === true : false;
 
@@ -18,16 +17,10 @@ const PostCard = ({ post, onCommentPress, onLikePress, onSharePress, onSavePress
       <DefaultProfilePic style={styles.profilePic} />
       <View style={styles.body}>
         <Text style={styles.username}>{post.username}</Text>
-
-        {/* Post Image (Conditional) */}
         {post.imageUrl && (
           <Image source={{ uri: post.imageUrl }} style={styles.image} resizeMode="cover" />
         )}
-
-        {/* Post Text */}
         <Text style={styles.text}>{post.text}</Text>
-
-        {/* Action Buttons */}
         <View style={styles.actions}>
           <TouchableOpacity onPress={onLikePress} style={styles.actionButton}>
             <Icon
@@ -91,6 +84,7 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: 250,
+    marginTop: 10,
     borderRadius: 8,
     marginBottom: 10,
   },
