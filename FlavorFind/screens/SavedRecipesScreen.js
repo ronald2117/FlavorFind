@@ -84,10 +84,6 @@ const SavedRecipesScreen = () => {
         renderItem={({ item }) => (
           <PostCard
             post={item}
-            onCommentPress={() => Alert.alert('Comments', 'Navigate to comments.')}
-            onLikePress={() => Alert.alert('Like', 'Like functionality not implemented.')}
-            onSharePress={() => Alert.alert('Share', 'Share functionality not implemented.')}
-            onSavePress={() => Alert.alert('Save', 'Save functionality not implemented.')}
             currentUserId={auth.currentUser?.uid}
           />
         )}
