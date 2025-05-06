@@ -2,15 +2,33 @@ import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, Animated } from 'react-native';
 import DefaultProfilePic from '../components/DefaultProfilePic';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { doc, updateDoc, arrayUnion } from 'firebase/firestore';
-import { db } from '../firebaseConfig';
+import { doc, updateDoc, arrayUnion,} from 'firebase/firestore';
+import { db, auth } from '../firebaseConfig';
+import { useNavigation } from '@react-navigation/native';
 
-const PostCard = ({ post, onCommentPress, onSharePress, onSavePress, currentUserId }) => {
+const PostCard = ({ post, currentUserId }) => {
   const [isLiked, setIsLiked] = useState(post.likes?.includes(currentUserId) || false);
   const [likeCount, setLikeCount] = useState(post.likes?.length || 0);
   const [scaleValue] = useState(new Animated.Value(1)); 
+  const navigation = useNavigation();
 
-  const handleLikePress = async () => {
+  const handleNavigateToComments = (postId) => {
+    navigation.navigate('ViewPost', { postId });
+  };
+  const handleShare = (postId) => { console.log('Share:', postId); /* Add Share logic */ };
+  const handleSave = async (postId) => {
+    try {
+      const userRef = doc(db, 'users', auth.currentUser.uid);
+      await updateDoc(userRef, {
+        savedPosts: arrayUnion(postId),
+      });
+      console.log(`Post ${postId} saved successfully.`);
+    } catch (error) {
+      console.error('Error saving post:', error);
+    }
+  };
+
+  const handleLike = async () => {
     Animated.sequence([
       Animated.timing(scaleValue, {
         toValue: 1.5, 
@@ -58,7 +76,7 @@ const PostCard = ({ post, onCommentPress, onSharePress, onSavePress, currentUser
           <Image source={{ uri: post.imageUrl }} style={styles.image} resizeMode="cover" />
         )}
         <View style={styles.actions}>
-          <TouchableOpacity onPress={handleLikePress} style={styles.actionButton}>
+          <TouchableOpacity onPress={() => handleLike(post.id)} style={styles.actionButton}>
             <Animated.View style={{ transform: [{ scale: scaleValue }] }}>
               <Icon
                 name={isLiked ? 'heart' : 'heart-outline'}
@@ -71,16 +89,16 @@ const PostCard = ({ post, onCommentPress, onSharePress, onSavePress, currentUser
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={onCommentPress} style={styles.actionButton}>
+          <TouchableOpacity onPress={() => handleNavigateToComments(post.id)} style={styles.actionButton}>
             <Icon name="chatbubble-outline" size={20} color="#555" />
             <Text style={styles.actionText}>{post.commentCount || 0}</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={onSharePress} style={styles.actionButton}>
+          {/* <TouchableOpacity onPress={() => handleShare(post.id)} style={styles.actionButton}>
             <Icon name="share-outline" size={20} color="#555" />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
-          <TouchableOpacity onPress={onSavePress} style={[styles.actionButton, styles.saveButton]}>
+          <TouchableOpacity onPress={() => handleSave(post.id)} style={[styles.actionButton, styles.saveButton]}>
             <Icon
               name={post.saves?.includes(currentUserId) ? 'bookmark' : 'bookmark-outline'}
               size={20}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, FlatList, StyleSheet, Text, Button } from 'react-native';
-import { collection, getDocs, updateDoc, query, orderBy, doc, getDoc, arrayUnion } from 'firebase/firestore';
+import { collection, getDocs, query, orderBy, doc, getDoc,} from 'firebase/firestore';
 import { db, auth } from '../firebaseConfig';
 import PostCard from '../components/PostCard';
 import { useNavigation, useIsFocused } from '@react-navigation/native';
@@ -58,48 +58,6 @@ const FeedScreen = () => {
     }
   }, [isFocused]);
 
-  const handleNavigateToComments = (postId) => {
-    navigation.navigate('ViewPost', { postId });
-  };
-
-  const handleLike = async (postId) => {
-    try {
-      const postRef = doc(db, 'posts', postId);
-      const postSnap = await getDoc(postRef);
-
-      if (postSnap.exists()) {
-        const postData = postSnap.data();
-        const currentUserId = auth.currentUser?.uid;
-
-        if (postData.likes && postData.likes.includes(currentUserId)) {
-          await updateDoc(postRef, {
-            likes: postData.likes.filter((id) => id !== currentUserId),
-          });
-          console.log(`Post ${postId} unliked.`);
-        } else {
-          await updateDoc(postRef, {
-            likes: arrayUnion(currentUserId),
-          });
-          console.log(`Post ${postId} liked.`);
-        }
-      }
-    } catch (error) {
-      console.error('Error liking post:', error);
-    }
-  };
-  const handleShare = (postId) => { console.log('Share:', postId); /* Add Share logic */ };
-  const handleSave = async (postId) => {
-    try {
-      const userRef = doc(db, 'users', auth.currentUser.uid);
-      await updateDoc(userRef, {
-        savedPosts: arrayUnion(postId),
-      });
-      console.log(`Post ${postId} saved successfully.`);
-    } catch (error) {
-      console.error('Error saving post:', error);
-    }
-  };
-
   if (loading) {
     return <LoadingScreen />;
   }
@@ -125,10 +83,6 @@ const FeedScreen = () => {
         renderItem={({ item }) => (
           <PostCard
             post={item}
-            onCommentPress={() => handleNavigateToComments(item.id)}
-            onLikePress={() => handleLike(item.id)} 
-            onSharePress={() => handleShare(item.id)}
-            onSavePress={() => handleSave(item.id)}
             currentUserId={auth.currentUser?.uid}
           />
         )}
@@ -151,7 +105,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 5,
-    backgroundColor: '#111', // Dark background for header
+    backgroundColor: '#111',
   },
   centered: {
     flex: 1,
@@ -159,7 +113,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   listContent: {
-    paddingBottom: 20, // Add some padding at the bottom
+    paddingBottom: 20,
   },
 });
 
