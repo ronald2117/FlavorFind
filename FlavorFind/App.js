@@ -5,6 +5,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { ActivityIndicator, View, StyleSheet } from 'react-native';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebaseConfig';
+import * as SplashScreen from 'expo-splash-screen';
+import CustomSplashScreen from './screens/CustomSplashScreen'; 
 
 import SignInScreen from './screens/SignInScreen';
 import SignUpScreen from './screens/SignUpScreen';
@@ -37,7 +39,14 @@ function AuthStack() {
 export default function App() {
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState(null);
+  const [isReady, setIsReady] = useState(false);
 
+  const handleReady = async () => {
+    await SplashScreen.hideAsync();
+    setIsReady(true);
+  };
+
+  
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
@@ -45,10 +54,14 @@ export default function App() {
         setInitializing(false);
       }
     });
-
+    
     return unsubscribe;
   }, []);
-
+  
+  if (!isReady) {
+    return <CustomSplashScreen onReady={handleReady} />;
+  }
+  
   if (initializing) {
     return (
       <View style={styles.container}>

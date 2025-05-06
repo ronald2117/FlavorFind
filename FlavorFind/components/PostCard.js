@@ -53,10 +53,10 @@ const PostCard = ({ post, onCommentPress, onSharePress, onSavePress, currentUser
       <DefaultProfilePic style={styles.profilePic} />
       <View style={styles.body}>
         <Text style={styles.username}>{post.username}</Text>
+        <Text style={styles.text}>{post.text}</Text>
         {post.imageUrl && (
           <Image source={{ uri: post.imageUrl }} style={styles.image} resizeMode="cover" />
         )}
-        <Text style={styles.text}>{post.text}</Text>
         <View style={styles.actions}>
           <TouchableOpacity onPress={handleLikePress} style={styles.actionButton}>
             <Animated.View style={{ transform: [{ scale: scaleValue }] }}>
