@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { View, FlatList, StyleSheet, Text, Button } from 'react-native';
-import { collection, getDocs, query, orderBy, doc, getDoc } from 'firebase/firestore';
+import { collection, getDocs, updateDoc, query, orderBy, doc, getDoc, arrayUnion } from 'firebase/firestore';
 import { db, auth } from '../firebaseConfig';
 import PostCard from '../components/PostCard';
 import { useNavigation, useIsFocused } from '@react-navigation/native';
-import LogoText from '../components/LogoText'; 
+import LogoText from '../components/LogoText';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import LoadingScreen from './LoadingScreen';
@@ -14,7 +14,7 @@ const FeedScreen = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigation = useNavigation();
-  const isFocused = useIsFocused(); 
+  const isFocused = useIsFocused();
 
   const fetchPosts = async () => {
     setLoading(true);
@@ -26,15 +26,15 @@ const FeedScreen = () => {
         const postData = postDoc.data();
         let username = postData.username;
         if (!username && postData.userId) {
-           try {
-             const userRef = doc(db, 'users', postData.userId);
-             const userSnap = await getDoc(userRef);
-             if (userSnap.exists()) {
-               username = userSnap.data().username || 'Unknown User';
-             }
-           } catch (userError) {
-             console.warn(`Could not fetch user data for post ${postDoc.id}:`, userError);
-           }
+          try {
+            const userRef = doc(db, 'users', postData.userId);
+            const userSnap = await getDoc(userRef);
+            if (userSnap.exists()) {
+              username = userSnap.data().username || 'Unknown User';
+            }
+          } catch (userError) {
+            console.warn(`Could not fetch user data for post ${postDoc.id}:`, userError);
+          }
         }
 
         return {
@@ -54,7 +54,7 @@ const FeedScreen = () => {
 
   useEffect(() => {
     if (isFocused) { // Refetch posts when the screen comes into focus
-        fetchPosts();
+      fetchPosts();
     }
   }, [isFocused]); // Dependency array includes isFocused
 
@@ -64,7 +64,17 @@ const FeedScreen = () => {
 
   const handleLike = (postId) => { console.log('Like:', postId); /* Add Firestore update */ };
   const handleShare = (postId) => { console.log('Share:', postId); /* Add Share logic */ };
-  const handleSave = (postId) => { console.log('Save:', postId); /* Add Firestore update */ };
+  const handleSave = async (postId) => {
+    try {
+      const userRef = doc(db, 'users', auth.currentUser.uid);
+      await updateDoc(userRef, {
+        savedPosts: arrayUnion(postId),
+      });
+      console.log(`Post ${postId} saved successfully.`);
+    } catch (error) {
+      console.error('Error saving post:', error);
+    }
+  };
 
   if (loading) {
     return <LoadingScreen />; // Show loading screen while fetching posts
@@ -78,12 +88,12 @@ const FeedScreen = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <LogoText />
-        <Ionicons 
-          name="search" 
-          size={30} 
-          color="white" 
-          onPress={() => navigation.navigate('Search')} 
-          style={{ marginRight: 15 }} 
+        <Ionicons
+          name="search"
+          size={30}
+          color="white"
+          onPress={() => navigation.navigate('Search')}
+          style={{ marginRight: 15 }}
         />
       </View>
       <FlatList
@@ -120,9 +130,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#111', // Dark background for header
   },
   centered: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   listContent: {
     paddingBottom: 20, // Add some padding at the bottom

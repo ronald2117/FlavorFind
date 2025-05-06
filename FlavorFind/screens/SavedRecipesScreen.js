@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, FlatList, StyleSheet, Text, Alert } from 'react-native';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { View, FlatList, StyleSheet, Text, Alert, TouchableOpacity, SafeAreaView } from 'react-native';
+import { collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore';
 import { db, auth } from '../firebaseConfig';
 import PostCard from '../components/PostCard';
 import LoadingScreen from './LoadingScreen';
 import EmptySavedRecipeScreen from './EmptySavedRecipeScreen';
+import { Ionicons } from '@expo/vector-icons';
 
 const SavedRecipesScreen = () => {
   const [savedRecipes, setSavedRecipes] = useState([]);
@@ -20,11 +21,21 @@ const SavedRecipesScreen = () => {
         throw new Error('User not logged in.');
       }
 
-      const savedQuery = query(
-        collection(db, 'posts'),
-        where(`saves.${userId}`, '==', true) // Fetch posts saved by the current user
-      );
-      const querySnapshot = await getDocs(savedQuery);
+      const userRef = doc(db, 'users', userId);
+      const userSnap = await getDoc(userRef);
+
+      if (!userSnap.exists()) {
+        throw new Error('User data not found.');
+      }
+
+      const savedPosts = userSnap.data().savedPosts || [];
+      if (savedPosts.length === 0) {
+        setSavedRecipes([]);
+        return;
+      }
+
+      const postsQuery = query(collection(db, 'posts'), where('__name__', 'in', savedPosts));
+      const querySnapshot = await getDocs(postsQuery);
 
       const recipes = querySnapshot.docs.map((doc) => ({
         id: doc.id,
@@ -57,13 +68,17 @@ const SavedRecipesScreen = () => {
   }
 
   if (savedRecipes.length === 0) {
-    return (
-      <EmptySavedRecipeScreen/>
-    );
+    return <EmptySavedRecipeScreen />;
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        {/* <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+          <Ionicons name="chevron-back-outline" size={30} color="white" />
+        </TouchableOpacity> */}
+        <Text style={styles.title}>Saved Posts</Text>
+      </View>
       <FlatList
         data={savedRecipes}
         renderItem={({ item }) => (
@@ -79,7 +94,7 @@ const SavedRecipesScreen = () => {
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContent}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -106,6 +121,19 @@ const styles = StyleSheet.create({
   listContent: {
     padding: 10,
   },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+    paddingTop: 45,
+  },
+  title: {
+    color: '#fff',
+    fontSize: 24,
+  },
+  // backButton: {
+  //   marginRight: 5,
+  // }
 });
 
 export default SavedRecipesScreen;
