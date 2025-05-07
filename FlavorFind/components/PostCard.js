@@ -2,20 +2,30 @@ import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, Animated } from 'react-native';
 import DefaultProfilePic from '../components/DefaultProfilePic';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { doc, updateDoc, arrayUnion,} from 'firebase/firestore';
+import { doc, updateDoc, arrayUnion, } from 'firebase/firestore';
 import { db, auth } from '../firebaseConfig';
 import { useNavigation } from '@react-navigation/native';
 
 const PostCard = ({ post, currentUserId }) => {
   const [isLiked, setIsLiked] = useState(post.likes?.includes(currentUserId) || false);
   const [likeCount, setLikeCount] = useState(post.likes?.length || 0);
-  const [scaleValue] = useState(new Animated.Value(1)); 
+  const [scaleValue] = useState(new Animated.Value(1));
   const navigation = useNavigation();
 
   const handleNavigateToComments = (postId) => {
     navigation.navigate('ViewPost', { postId });
   };
-  const handleShare = (postId) => { console.log('Share:', postId); /* Add Share logic */ };
+  const handleShare = async (postId) => {
+    try {
+      const postRef = doc(db, 'posts', postId);
+      await updateDoc(postRef, {
+        repostedBy: arrayUnion(auth.currentUser.uid),
+      });
+      console.log(`Post ${postId} shared successfully.`);
+    } catch (error) {
+      console.error('Error sharing post:', error);
+    }
+  };
   const handleSave = async (postId) => {
     try {
       const userRef = doc(db, 'users', auth.currentUser.uid);
@@ -31,7 +41,7 @@ const PostCard = ({ post, currentUserId }) => {
   const handleLike = async () => {
     Animated.sequence([
       Animated.timing(scaleValue, {
-        toValue: 1.5, 
+        toValue: 1.5,
         duration: 150,
         useNativeDriver: true,
       }),
@@ -68,13 +78,13 @@ const PostCard = ({ post, currentUserId }) => {
     try {
       const userRef = doc(db, 'users', auth.currentUser.uid);
       if (isLiked) {
-      await updateDoc(userRef, {
-        likedPosts: post.likes.filter((id) => id !== post.id),
-      });
+        await updateDoc(userRef, {
+          likedPosts: post.likes.filter((id) => id !== post.id),
+        });
       } else {
-      await updateDoc(userRef, {
-        likedPosts: arrayUnion(post.id),
-      });
+        await updateDoc(userRef, {
+          likedPosts: arrayUnion(post.id),
+        });
       }
     } catch (error) {
       console.error('Error updating liked posts:', error);
@@ -109,9 +119,9 @@ const PostCard = ({ post, currentUserId }) => {
             <Text style={styles.actionText}>{post.commentCount || 0}</Text>
           </TouchableOpacity>
 
-          {/* <TouchableOpacity onPress={() => handleShare(post.id)} style={styles.actionButton}>
+          <TouchableOpacity onPress={() => handleShare(post.id)} style={styles.actionButton}>
             <Icon name="share-outline" size={20} color="#555" />
-          </TouchableOpacity> */}
+          </TouchableOpacity>
 
           <TouchableOpacity onPress={() => handleSave(post.id)} style={[styles.actionButton, styles.saveButton]}>
             <Icon
