@@ -64,6 +64,21 @@ const PostCard = ({ post, currentUserId }) => {
     } catch (error) {
       console.error('Error updating likes:', error);
     }
+
+    try {
+      const userRef = doc(db, 'users', auth.currentUser.uid);
+      if (isLiked) {
+      await updateDoc(userRef, {
+        likedPosts: post.likes.filter((id) => id !== post.id),
+      });
+      } else {
+      await updateDoc(userRef, {
+        likedPosts: arrayUnion(post.id),
+      });
+      }
+    } catch (error) {
+      console.error('Error updating liked posts:', error);
+    }
   };
 
   return (
