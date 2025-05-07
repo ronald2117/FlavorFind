@@ -6,7 +6,7 @@ const WelcomeScreen = ({ navigation }) => {
     return (
         <View style={styles.container}>
             <View style={styles.logoContainer}>
-                <Logo width={250} height={250} />
+                <Logo width={220} height={220} />
             </View>
             <View style={styles.buttonContainer}>
                 <View style={styles.buttonWrapper}>
