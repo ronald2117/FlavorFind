@@ -10,7 +10,7 @@ const EmptyScreen = () => {
 };
 
 export default EmptyScreen;
-
+//comment
 const styles = StyleSheet.create({
   container: {
     flex: 1,
