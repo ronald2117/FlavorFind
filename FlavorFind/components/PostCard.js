@@ -9,12 +9,15 @@ import { useNavigation } from '@react-navigation/native';
 const PostCard = ({ post, currentUserId }) => {
   const [isLiked, setIsLiked] = useState(post.likes?.includes(currentUserId) || false);
   const [likeCount, setLikeCount] = useState(post.likes?.length || 0);
-  const [scaleValue] = useState(new Animated.Value(1));
+  const [scaleValue] = useState(new Animated.Value(1)); // For like animation
+  const [saveScaleValue] = useState(new Animated.Value(1)); // For save animation
+  const [isSaved, setIsSaved] = useState(post.saves?.includes(currentUserId) || false); // Track saved state
   const navigation = useNavigation();
 
   const handleNavigateToComments = (postId) => {
     navigation.navigate('ViewPost', { postId });
   };
+
   const handleShare = async (postId) => {
     try {
       const postRef = doc(db, 'posts', postId);
@@ -26,13 +29,36 @@ const PostCard = ({ post, currentUserId }) => {
       console.error('Error sharing post:', error);
     }
   };
+
   const handleSave = async (postId) => {
+    Animated.sequence([
+      Animated.timing(saveScaleValue, {
+        toValue: 1.5, 
+        duration: 150,
+        useNativeDriver: true,
+      }),
+      Animated.timing(saveScaleValue, {
+        toValue: 1, 
+        duration: 150,
+        useNativeDriver: true,
+      }),
+    ]).start();
+
     try {
       const userRef = doc(db, 'users', auth.currentUser.uid);
-      await updateDoc(userRef, {
-        savedPosts: arrayUnion(postId),
-      });
-      console.log(`Post ${postId} saved successfully.`);
+      if (isSaved) {
+        await updateDoc(userRef, {
+          savedPosts: post.saves.filter((id) => id !== postId),
+        });
+        setIsSaved(false);
+        console.log(`Post ${postId} unsaved.`);
+      } else {
+        await updateDoc(userRef, {
+          savedPosts: arrayUnion(postId),
+        });
+        setIsSaved(true);
+        console.log(`Post ${postId} saved successfully.`);
+      }
     } catch (error) {
       console.error('Error saving post:', error);
     }
@@ -101,6 +127,7 @@ const PostCard = ({ post, currentUserId }) => {
           <Image source={{ uri: post.imageUrl }} style={styles.image} resizeMode="cover" />
         )}
         <View style={styles.actions}>
+          {/* Like Button */}
           <TouchableOpacity onPress={() => handleLike(post.id)} style={styles.actionButton}>
             <Animated.View style={{ transform: [{ scale: scaleValue }] }}>
               <Icon
@@ -114,21 +141,26 @@ const PostCard = ({ post, currentUserId }) => {
             </Text>
           </TouchableOpacity>
 
+          {/* Comment Button */}
           <TouchableOpacity onPress={() => handleNavigateToComments(post.id)} style={styles.actionButton}>
             <Icon name="chatbubble-outline" size={20} color="#555" />
             <Text style={styles.actionText}>{post.commentCount || 0}</Text>
           </TouchableOpacity>
 
+          {/* Share Button */}
           <TouchableOpacity onPress={() => handleShare(post.id)} style={styles.actionButton}>
             <Icon name="share-outline" size={20} color="#555" />
           </TouchableOpacity>
 
+          {/* Save Button with Animation */}
           <TouchableOpacity onPress={() => handleSave(post.id)} style={[styles.actionButton, styles.saveButton]}>
-            <Icon
-              name={post.saves?.includes(currentUserId) ? 'bookmark' : 'bookmark-outline'}
-              size={20}
-              color={post.saves?.includes(currentUserId) ? 'green' : '#555'}
-            />
+            <Animated.View style={{ transform: [{ scale: saveScaleValue }] }}>
+              <Icon
+                name={isSaved ? 'bookmark' : 'bookmark-outline'}
+                size={20}
+                color={isSaved ? '#FFBA09' : '#555'}
+              />
+            </Animated.View>
           </TouchableOpacity>
         </View>
       </View>
