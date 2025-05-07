@@ -4,8 +4,8 @@ import Svg, { Circle, Path } from "react-native-svg"
 function DefaultProfilePic(props) {
   return (
     <Svg
-      width={40}
-      height={40}
+    width={props.width || 40}
+    height={props.width || 40}
       viewBox="0 0 40 40"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
