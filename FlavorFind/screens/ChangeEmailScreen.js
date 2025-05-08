@@ -3,8 +3,9 @@ import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-nativ
 import { auth } from '../firebaseConfig';
 import { updateEmail } from 'firebase/auth';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 
-const ChangeEmailScreen = () => {
+const ChangeEmailScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
 
   const handleChangeEmail = async () => {
@@ -18,7 +19,21 @@ const ChangeEmailScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.heading}>Change Email</Text>
+      <View style={{flexDirection: 'row', marginBottom: 15}}>
+        <TouchableOpacity onPress={() => navigation.goBack()} >
+          <Ionicons name="chevron-back-outline" size={24} color="white" />
+        </TouchableOpacity>
+        <Text
+          style={{
+            color: "white",
+            fontSize: 20,
+            fontWeight: "bold",
+            marginLeft: 5,
+          }}
+        >
+          Change Email
+        </Text>
+      </View>
       <TextInput
         style={styles.input}
         placeholder="New email"

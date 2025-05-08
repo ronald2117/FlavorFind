@@ -20,7 +20,21 @@ const SettingsScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.heading}>Settings</Text>
+      <View style={styles.header}>
+              <TouchableOpacity onPress={() => navigation.goBack()}>
+                <Ionicons name="chevron-back-outline" size={24} color="white" />
+              </TouchableOpacity>
+              <Text
+                style={{
+                  color: "white",
+                  fontSize: 20,
+                  fontWeight: "bold",
+                  marginLeft: 5,
+                }}
+              >
+                Settings
+              </Text>
+            </View>
 
       <TouchableOpacity style={styles.option} onPress={() => navigation.navigate('ChangeEmail')}>
         <Ionicons name="mail-outline" size={20} color="white" />
@@ -47,6 +61,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#0D0D0D',
     padding: 20,
+  },
+  header: {
+    flexDirection: 'row',
   },
   heading: {
     fontSize: 22,

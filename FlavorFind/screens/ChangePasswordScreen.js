@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import { auth } from '../firebaseConfig';
 import { updatePassword } from 'firebase/auth';
+import { Ionicons } from '@expo/vector-icons';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-const ChangePasswordScreen = () => {
+const ChangePasswordScreen = ({ navigation }) => {
   const [password, setPassword] = useState('');
 
   const handleChangePassword = async () => {
@@ -16,8 +18,22 @@ const ChangePasswordScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.heading}>Update Password</Text>
+    <SafeAreaView style={styles.container}>
+      <View style={{flexDirection: 'row', marginBottom: 15}}>
+        <TouchableOpacity onPress={() => navigation.goBack()} >
+          <Ionicons name="chevron-back-outline" size={24} color="white" />
+        </TouchableOpacity>
+        <Text
+          style={{
+            color: "white",
+            fontSize: 20,
+            fontWeight: "bold",
+            marginLeft: 5,
+          }}
+        >
+          Update Password
+        </Text>
+      </View>
       <TextInput
         style={styles.input}
         placeholder="New password"
@@ -29,7 +45,7 @@ const ChangePasswordScreen = () => {
       <TouchableOpacity style={styles.button} onPress={handleChangePassword}>
         <Text style={styles.buttonText}>Update Password</Text>
       </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 };
 
