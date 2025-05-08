@@ -3,9 +3,8 @@ import { View, FlatList, StyleSheet, Text, Button } from 'react-native';
 import { collection, getDocs, query, orderBy, doc, getDoc,} from 'firebase/firestore';
 import { db, auth } from '../firebaseConfig';
 import PostCard from '../components/PostCard';
-import { useNavigation, useIsFocused } from '@react-navigation/native';
+import {useIsFocused } from '@react-navigation/native';
 import LogoText from '../components/LogoText';
-import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import LoadingScreen from './LoadingScreen';
 
