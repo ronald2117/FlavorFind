@@ -1,54 +1,80 @@
-import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, Animated } from 'react-native';
-import DefaultProfilePic from '../components/DefaultProfilePic';
-import Icon from 'react-native-vector-icons/Ionicons';
-import { doc, updateDoc, arrayUnion, } from 'firebase/firestore';
-import { db, auth } from '../firebaseConfig';
-import { useNavigation } from '@react-navigation/native';
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  Animated,
+} from "react-native";
+import DefaultProfilePic from "../components/DefaultProfilePic";
+import Icon from "react-native-vector-icons/Ionicons";
+import { doc, updateDoc, arrayUnion, getDoc } from "firebase/firestore";
+import { db, auth } from "../firebaseConfig";
+import { useNavigation } from "@react-navigation/native";
 
 const PostCard = ({ post, currentUserId }) => {
-  const [isLiked, setIsLiked] = useState(post.likes?.includes(currentUserId) || false);
+  const [isLiked, setIsLiked] = useState(
+    post.likes?.includes(currentUserId) || false
+  );
   const [likeCount, setLikeCount] = useState(post.likes?.length || 0);
-  const [scaleValue] = useState(new Animated.Value(1)); // For like animation
-  const [saveScaleValue] = useState(new Animated.Value(1)); // For save animation
-  const [isSaved, setIsSaved] = useState(post.saves?.includes(currentUserId) || false); // Track saved state
+  const [scaleValue] = useState(new Animated.Value(1));
+  const [saveScaleValue] = useState(new Animated.Value(1));
+  const [isSaved, setIsSaved] = useState(false);
   const navigation = useNavigation();
 
+  useEffect(() => {
+    const checkIfSaved = async () => {
+      try {
+        const userRef = doc(db, "users", auth.currentUser.uid);
+        const userDoc = await getDoc(userRef);
+        if (userDoc.exists()) {
+          const savedPosts = userDoc.data().savedPosts || [];
+          setIsSaved(savedPosts.includes(post.id));
+        }
+      } catch (error) {
+        console.error("Error checking if post is saved:", error);
+      }
+    };
+
+    checkIfSaved();
+  }, [post.id]);
+
   const handleNavigateToComments = (postId) => {
-    navigation.navigate('ViewPost', { postId });
+    navigation.navigate("ViewPost", { postId });
   };
 
   const handleShare = async (postId) => {
     try {
-      const postRef = doc(db, 'posts', postId);
+      const postRef = doc(db, "posts", postId);
       await updateDoc(postRef, {
         repostedBy: arrayUnion(auth.currentUser.uid),
       });
       console.log(`Post ${postId} shared successfully.`);
     } catch (error) {
-      console.error('Error sharing post:', error);
+      console.error("Error sharing post:", error);
     }
   };
 
   const handleSave = async (postId) => {
     Animated.sequence([
       Animated.timing(saveScaleValue, {
-        toValue: 1.5, 
+        toValue: 1.5,
         duration: 150,
         useNativeDriver: true,
       }),
       Animated.timing(saveScaleValue, {
-        toValue: 1, 
+        toValue: 1,
         duration: 150,
         useNativeDriver: true,
       }),
     ]).start();
 
     try {
-      const userRef = doc(db, 'users', auth.currentUser.uid);
+      const userRef = doc(db, "users", auth.currentUser.uid);
       if (isSaved) {
         await updateDoc(userRef, {
-          savedPosts: post.saves.filter((id) => id !== postId),
+          savedPosts: (post.saves || []).filter((id) => id !== postId),
         });
         setIsSaved(false);
         console.log(`Post ${postId} unsaved.`);
@@ -60,7 +86,7 @@ const PostCard = ({ post, currentUserId }) => {
         console.log(`Post ${postId} saved successfully.`);
       }
     } catch (error) {
-      console.error('Error saving post:', error);
+      console.error("Error saving or unsaving post:", error);
     }
   };
 
@@ -87,7 +113,7 @@ const PostCard = ({ post, currentUserId }) => {
     }
 
     try {
-      const postRef = doc(db, 'posts', post.id);
+      const postRef = doc(db, "posts", post.id);
       if (isLiked) {
         await updateDoc(postRef, {
           likes: post.likes.filter((id) => id !== currentUserId),
@@ -98,11 +124,11 @@ const PostCard = ({ post, currentUserId }) => {
         });
       }
     } catch (error) {
-      console.error('Error updating likes:', error);
+      console.error("Error updating likes:", error);
     }
 
     try {
-      const userRef = doc(db, 'users', auth.currentUser.uid);
+      const userRef = doc(db, "users", auth.currentUser.uid);
       if (isLiked) {
         await updateDoc(userRef, {
           likedPosts: post.likes.filter((id) => id !== post.id),
@@ -113,7 +139,7 @@ const PostCard = ({ post, currentUserId }) => {
         });
       }
     } catch (error) {
-      console.error('Error updating liked posts:', error);
+      console.error("Error updating liked posts:", error);
     }
   };
 
@@ -124,16 +150,23 @@ const PostCard = ({ post, currentUserId }) => {
         <Text style={styles.username}>{post.username}</Text>
         <Text style={styles.text}>{post.text}</Text>
         {post.imageUrl && (
-          <Image source={{ uri: post.imageUrl }} style={styles.image} resizeMode="cover" />
+          <Image
+            source={{ uri: post.imageUrl }}
+            style={styles.image}
+            resizeMode="cover"
+          />
         )}
         <View style={styles.actions}>
           {/* Like Button */}
-          <TouchableOpacity onPress={() => handleLike(post.id)} style={styles.actionButton}>
+          <TouchableOpacity
+            onPress={() => handleLike(post.id)}
+            style={styles.actionButton}
+          >
             <Animated.View style={{ transform: [{ scale: scaleValue }] }}>
               <Icon
-                name={isLiked ? 'heart' : 'heart-outline'}
+                name={isLiked ? "heart" : "heart-outline"}
                 size={24}
-                color={isLiked ? 'red' : '#555'}
+                color={isLiked ? "red" : "#555"}
               />
             </Animated.View>
             <Text style={isLiked ? styles.likedText : styles.actionText}>
@@ -142,23 +175,32 @@ const PostCard = ({ post, currentUserId }) => {
           </TouchableOpacity>
 
           {/* Comment Button */}
-          <TouchableOpacity onPress={() => handleNavigateToComments(post.id)} style={styles.actionButton}>
+          <TouchableOpacity
+            onPress={() => handleNavigateToComments(post.id)}
+            style={styles.actionButton}
+          >
             <Icon name="chatbubble-outline" size={20} color="#555" />
             <Text style={styles.actionText}>{post.commentCount || 0}</Text>
           </TouchableOpacity>
 
           {/* Share Button */}
-          <TouchableOpacity onPress={() => handleShare(post.id)} style={styles.actionButton}>
+          <TouchableOpacity
+            onPress={() => handleShare(post.id)}
+            style={styles.actionButton}
+          >
             <Icon name="share-outline" size={20} color="#555" />
           </TouchableOpacity>
 
           {/* Save Button with Animation */}
-          <TouchableOpacity onPress={() => handleSave(post.id)} style={[styles.actionButton, styles.saveButton]}>
+          <TouchableOpacity
+            onPress={() => handleSave(post.id)}
+            style={[styles.actionButton, styles.saveButton]}
+          >
             <Animated.View style={{ transform: [{ scale: saveScaleValue }] }}>
               <Icon
-                name={isSaved ? 'bookmark' : 'bookmark-outline'}
+                name={isSaved ? "bookmark" : "bookmark-outline"}
                 size={20}
-                color={isSaved ? '#FFBA09' : '#555'}
+                color={isSaved ? "#FFBA09" : "#555"}
               />
             </Animated.View>
           </TouchableOpacity>
@@ -173,14 +215,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   card: {
-    backgroundColor: '#000',
+    backgroundColor: "#000",
     borderRadius: 8,
     padding: 15,
     marginVertical: 8,
     elevation: 2,
     borderTopWidth: 1,
-    borderTopColor: '#eee',
-    flexDirection: 'row',
+    borderTopColor: "#eee",
+    flexDirection: "row",
   },
   profilePic: {
     width: 50,
@@ -189,12 +231,12 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   username: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
     fontSize: 16,
-    color: '#fff',
+    color: "#fff",
   },
   image: {
-    width: '100%',
+    width: "100%",
     height: 250,
     marginTop: 10,
     borderRadius: 8,
@@ -204,29 +246,29 @@ const styles = StyleSheet.create({
     fontSize: 15,
     lineHeight: 20,
     marginTop: 5,
-    color: '#fff',
-    flexWrap: 'wrap',
-    width: '100%',
+    color: "#fff",
+    flexWrap: "wrap",
+    width: "100%",
   },
   actions: {
-    flexDirection: 'row',
+    flexDirection: "row",
     paddingTop: 10,
-    alignItems: 'center',
+    alignItems: "center",
   },
   actionButton: {
     padding: 5,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   actionText: {
     fontSize: 14,
-    color: '#555',
+    color: "#555",
     marginLeft: 5,
   },
   likedText: {
     fontSize: 14,
-    color: 'red',
-    fontWeight: 'bold',
+    color: "red",
+    fontWeight: "bold",
     marginLeft: 5,
   },
   saveButton: {
