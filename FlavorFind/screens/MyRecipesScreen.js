@@ -43,6 +43,8 @@ export default function MyRecipesScreen() {
           <PostCard post={item} currentUserId={auth.currentUser.uid} />
         )}
         contentContainerStyle={styles.list}
+        onRefresh={fetchRecipes} // Enables pull-to-refresh
+        refreshing={loading} // Shows spinner while refreshing
       />
     </View>
   );

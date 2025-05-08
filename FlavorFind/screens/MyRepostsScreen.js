@@ -44,6 +44,8 @@ export default function MyRepostsScreen() {
           <PostCard post={item} currentUserId={auth.currentUser.uid} />
         )}
         contentContainerStyle={styles.list}
+        onRefresh={fetchReposts}
+        refreshing={loading}
       />
     </View>
   );

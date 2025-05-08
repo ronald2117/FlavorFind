@@ -44,6 +44,8 @@ export default function MyLikesScreen() {
           <PostCard post={item} currentUserId={auth.currentUser.uid} />
         )}
         contentContainerStyle={styles.list}
+        onRefresh={fetchLikedPosts} // Enables pull-to-refresh
+        refreshing={loading} // Shows spinner while refreshing
       />
     </View>
   );
