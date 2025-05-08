@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, Image, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, TextInput, Button, Image, TouchableOpacity, Alert, StyleSheet} from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { doc, updateDoc } from 'firebase/firestore';
-import { auth, db, storage } from '../firebaseConfig'; // adjust to your file structure
+import { auth, db, storage } from '../firebaseConfig';
 import { Ionicons } from '@expo/vector-icons';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-export default function EditProfileScreen() {
+
+export default function EditProfileScreen({ navigation }) {
   const [username, setUsername] = useState('');
   const [name, setName] = useState('');
   const [image, setImage] = useState(null);
@@ -63,10 +65,15 @@ export default function EditProfileScreen() {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: 'black', padding: 20 }}>
-      <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold' }}>Edit profile</Text>
+    <SafeAreaView style={{ flex: 1, backgroundColor: 'black', padding: 20 }}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons name="chevron-back-outline" size={24} color="white" />
+        </TouchableOpacity>
+        <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold', marginLeft: 5 }}>Edit profile</Text>
+      </View>
 
-      <View style={{ marginTop: 40, backgroundColor: '#1e1e1e', borderRadius: 10, padding: 20 }}>
+      <View style={{ marginTop: 190, backgroundColor: '#1e1e1e', borderRadius: 10, padding: 20 }}>
         <TouchableOpacity
           onPress={() =>
             Alert.alert('Choose image', '', [
@@ -112,6 +119,12 @@ export default function EditProfileScreen() {
       >
         <Text style={{ color: 'white' }}>{uploading ? 'Submitting...' : 'Submit'}</Text>
       </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  header: {
+    flexDirection: 'row',
+  }
+})
