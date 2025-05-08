@@ -6,14 +6,21 @@ import {
   StyleSheet,
   TouchableOpacity,
   Animated,
+  Alert, // Import Alert for dialog functionality
 } from "react-native";
 import DefaultProfilePic from "../components/DefaultProfilePic";
 import Icon from "react-native-vector-icons/Ionicons";
-import { doc, updateDoc, arrayUnion, getDoc } from "firebase/firestore";
+import {
+  doc,
+  updateDoc,
+  arrayUnion,
+  getDoc,
+  deleteDoc,
+} from "firebase/firestore";
 import { db, auth } from "../firebaseConfig";
 import { useNavigation } from "@react-navigation/native";
 
-const PostCard = ({ post, currentUserId }) => {
+const PostCard = ({ post, currentUserId, context }) => {
   const [isLiked, setIsLiked] = useState(
     post.likes?.includes(currentUserId) || false
   );
@@ -50,7 +57,7 @@ const PostCard = ({ post, currentUserId }) => {
       await updateDoc(postRef, {
         repostedBy: arrayUnion(auth.currentUser.uid),
       });
-      console.log(`Post ${postId} shared successfully.`);
+      alert(`Post ${postId} reposted successfully.`);
     } catch (error) {
       console.error("Error sharing post:", error);
     }
@@ -143,11 +150,66 @@ const PostCard = ({ post, currentUserId }) => {
     }
   };
 
+  const handlePostOption = () => {
+    if (context === "newsfeed") {
+      if (post.userId === currentUserId) {
+        // Show delete option if the post belongs to the user
+        Alert.alert(
+          "Post Options",
+          "What would you like to do?",
+          [
+            {
+              text: "Delete Post",
+              onPress: () => handleDeletePost(post.id),
+              style: "destructive",
+            },
+            { text: "Cancel", style: "cancel" },
+          ],
+          { cancelable: true }
+        );
+      } else {
+        // Show report option if the post does not belong to the user
+        Alert.alert(
+          "Post Options",
+          "What would you like to do?",
+          [
+            {
+              text: "Report Post",
+              onPress: () => handleReportPost(post.id),
+              style: "default",
+            },
+            { text: "Cancel", style: "cancel" },
+          ],
+          { cancelable: true }
+        );
+      }
+    }
+  };
+
+  const handleDeletePost = async (postId) => {
+    try {
+      const postRef = doc(db, "posts", postId);
+      await deleteDoc(postRef); // Deletes the post from Firestore
+      alert("Post deleted successfully.");
+    } catch (error) {
+      console.error("Error deleting post:", error);
+      alert("Failed to delete the post. Please try again.");
+    }
+  };
+
+  const handleReportPost = (postId) => {
+    // Add your reporting logic here
+    alert(`Post ${postId} has been reported.`);
+  };
+
   return (
     <View style={styles.card}>
       <DefaultProfilePic style={styles.profilePic} />
       <View style={styles.body}>
         <Text style={styles.username}>{post.username}</Text>
+        <TouchableOpacity style={styles.postOption} onPress={handlePostOption}>
+          <Icon name="ellipsis-vertical" size={20} color="#fff" />
+        </TouchableOpacity>
         <Text style={styles.text}>{post.text}</Text>
         {post.imageUrl && (
           <Image
@@ -183,14 +245,6 @@ const PostCard = ({ post, currentUserId }) => {
             <Text style={styles.actionText}>{post.commentCount || 0}</Text>
           </TouchableOpacity>
 
-          {/* Share Button */}
-          <TouchableOpacity
-            onPress={() => handleShare(post.id)}
-            style={styles.actionButton}
-          >
-            <Icon name="share-outline" size={20} color="#555" />
-          </TouchableOpacity>
-
           {/* Save Button with Animation */}
           <TouchableOpacity
             onPress={() => handleSave(post.id)}
@@ -204,6 +258,14 @@ const PostCard = ({ post, currentUserId }) => {
               />
             </Animated.View>
           </TouchableOpacity>
+
+          {/* Share Button */}
+          <TouchableOpacity
+            onPress={() => handleShare(post.id)}
+            style={styles.actionButton}
+          >
+            <Icon name="paper-plane-outline" size={20} color="#555" />
+          </TouchableOpacity>
         </View>
       </View>
     </View>
@@ -213,6 +275,7 @@ const PostCard = ({ post, currentUserId }) => {
 const styles = StyleSheet.create({
   body: {
     flex: 1,
+    position: "relative",
   },
   card: {
     backgroundColor: "#000",
@@ -234,6 +297,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 16,
     color: "#fff",
+  },
+  postOption: {
+    position: "absolute",
+    right: 5,
+    padding: 5,
   },
   image: {
     width: "100%",

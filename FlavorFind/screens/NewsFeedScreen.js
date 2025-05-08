@@ -82,6 +82,7 @@ const FeedScreen = () => {
           <PostCard
             post={item}
             currentUserId={auth.currentUser?.uid}
+            context={"newsfeed"}
           />
         )}
         keyExtractor={(item) => item.id}
