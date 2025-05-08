@@ -42,6 +42,16 @@ function SavedRecipesNavigator() {
   );
 }
 
+const AccountStack = createNativeStackNavigator();
+function AccountNavigator() {
+  return (
+      <AccountStack.Navigator screenOptions={{ headerShown: false }}>
+          <AccountStack.Screen name="Account" component={AccountScreen} />
+          <AccountStack.Screen name="ViewPost" component={ViewPostScreen} />
+      </AccountStack.Navigator>
+  );
+}
+
 
 const Tab = createBottomTabNavigator();
 
@@ -100,7 +110,7 @@ export default function BottomTabs() {
       />
       <Tab.Screen 
         name="Account" 
-        component={AccountScreen}
+        component={AccountNavigator}
         options={{
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="person-circle-outline" size={24} color={color} />
