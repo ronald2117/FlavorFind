@@ -9,7 +9,6 @@ import {
 import FlavorBotLogoWithText from "../components/FlavorBotLogoWithText";
 import * as Clipboard from "expo-clipboard";
 import Markdown from "react-native-markdown-display";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 const AiRecipeResultScreen = ({ route }) => {
   const { recipe } = route.params;
@@ -25,23 +24,21 @@ const AiRecipeResultScreen = ({ route }) => {
   };
 
   return (
-    <SafeAreaView>
-      <ScrollView
-        contentContainerStyle={styles.scrollContainer}
-        style={styles.container}
+    <ScrollView
+      contentContainerStyle={styles.scrollContainer}
+      style={styles.container}
+    >
+      <View style={styles.logoContainer}>
+        <FlavorBotLogoWithText />
+      </View>
+      <Markdown style={markdownStyles}>{recipe}</Markdown>
+      <TouchableOpacity
+        style={styles.copyButton}
+        onPress={handleCopyToClipboard}
       >
-        <View style={styles.logoContainer}>
-          <FlavorBotLogoWithText />
-        </View>
-        <Markdown style={markdownStyles}>{recipe}</Markdown>
-        <TouchableOpacity
-          style={styles.copyButton}
-          onPress={handleCopyToClipboard}
-        >
-          <Markdown style={styles.copyButtonText}>Copy Recipe</Markdown>
-        </TouchableOpacity>
-      </ScrollView>
-    </SafeAreaView>
+        <Markdown style={styles.copyButtonText}>Copy Recipe</Markdown>
+      </TouchableOpacity>
+    </ScrollView>
   );
 };
 
@@ -56,6 +53,7 @@ const styles = StyleSheet.create({
   logoContainer: {
     alignItems: "center",
     marginBottom: 20,
+    marginTop: 30,
   },
   title: {
     fontSize: 24,
@@ -71,7 +69,7 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   copyButton: {
-    backgroundColor: "#333", // Blue button
+    backgroundColor: "#1E90FF", // Blue button
     paddingVertical: 12,
     borderRadius: 8,
     alignItems: "center",
