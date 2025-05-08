@@ -11,6 +11,7 @@ import AccountScreen from '../screens/AccountScreen';
 import FlavorBotLogo from './FlavorBotLogo';
 import FlavorBotLogoBNW from './FlavorBotLogoBNW';
 import ViewPostScreen from '../screens/ViewPostScreen';
+import EditProfileScreen from '../screens/EditProfileScreen';
 
 const AiStack = createNativeStackNavigator();
 function AiRecipeNavigator() {
@@ -48,6 +49,7 @@ function AccountNavigator() {
       <AccountStack.Navigator screenOptions={{ headerShown: false }}>
           <AccountStack.Screen name="Account" component={AccountScreen} />
           <AccountStack.Screen name="ViewPost" component={ViewPostScreen} />
+          <AccountStack.Screen name="EditProfile" component={EditProfileScreen} />
       </AccountStack.Navigator>
   );
 }

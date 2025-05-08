@@ -8,6 +8,7 @@ import MyLikesScreen from './MyLikesScreen';
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import DefaultProfilePic from '../components/DefaultProfilePic';
+import { Ionicons } from '@expo/vector-icons';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -16,6 +17,9 @@ export default function AccountScreen() {
     const user = auth.currentUser;
     return (
         <SafeAreaView style={styles.container}>
+            <TouchableOpacity onPress={() => navigation.navigate('EditProfile')}  style={{marginLeft: 330}}>
+                <Ionicons name="settings-outline" size={24} color="white" style={{ margin: 10}} />
+            </TouchableOpacity>
             <View style={styles.header}>
                 <View>
                     <Text style={styles.name}>{user.displayName || 'Username'}</Text>
