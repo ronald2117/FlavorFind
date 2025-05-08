@@ -13,7 +13,6 @@ const FeedScreen = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigation = useNavigation();
   const isFocused = useIsFocused();
 
   const fetchPosts = async () => {
