@@ -69,14 +69,14 @@ const FeedScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <LogoText />
-        <Ionicons
+        <LogoText  style={{ marginLeft: 15}} />
+        {/* <Ionicons
           name="search"
           size={30}
           color="white"
           onPress={() => navigation.navigate('Search')}
           style={{ marginRight: 15 }}
-        />
+        /> */}
       </View>
       <FlatList
         data={posts}
