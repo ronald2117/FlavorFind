@@ -2,13 +2,14 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { auth } from '../firebaseConfig';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import { useNavigation } from '@react-navigation/native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
+
+import DefaultProfilePic from '../components/DefaultProfilePic';
 import MyRecipesScreen from './MyRecipesScreen';
 import MyRepostsScreen from './MyRepostsScreen';
 import MyLikesScreen from './MyLikesScreen';
-import { useNavigation } from '@react-navigation/native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import DefaultProfilePic from '../components/DefaultProfilePic';
-import { Ionicons } from '@expo/vector-icons';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -17,7 +18,7 @@ export default function AccountScreen() {
     const user = auth.currentUser;
     return (
         <SafeAreaView style={styles.container}>
-            <TouchableOpacity onPress={() => navigation.navigate('EditProfile')}  style={{marginLeft: 330}}>
+            <TouchableOpacity onPress={() => navigation.navigate('Settings')}  style={{marginLeft: 330}}>
                 <Ionicons name="settings-outline" size={24} color="white" style={{ margin: 10}} />
             </TouchableOpacity>
             <View style={styles.header}>
