@@ -51,7 +51,7 @@ export default function AccountScreen() {
 }
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: '#000' },
-    header: { padding: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+    header: { padding: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginLeft: 15 },
     name: { color: '#fff', fontSize: 24 },
     email: { color: '#aaa', fontSize: 14 },
     edit: {
@@ -80,5 +80,6 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 1.0,
         elevation: 2,
+        marginTop: 5,
     },
 });
