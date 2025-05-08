@@ -43,8 +43,8 @@ export default function MyRecipesScreen() {
           <PostCard post={item} currentUserId={auth.currentUser.uid} />
         )}
         contentContainerStyle={styles.list}
-        onRefresh={fetchRecipes} // Enables pull-to-refresh
-        refreshing={loading} // Shows spinner while refreshing
+        onRefresh={fetchRecipes} 
+        refreshing={loading} 
       />
     </View>
   );
@@ -52,7 +52,7 @@ export default function MyRecipesScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1, // Ensures the FlatList takes up the full screen and scrolls properly
+    flex: 1, 
     backgroundColor: "#000",
   },
   list: {

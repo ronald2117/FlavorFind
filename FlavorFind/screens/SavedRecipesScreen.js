@@ -82,9 +82,9 @@ const SavedRecipesScreen = () => {
     );
   }
 
-  if (savedRecipes.length === 0) {
-    return <EmptySavedRecipeScreen />;
-  }
+  // if (savedRecipes.length === 0) {
+  //   return <EmptySavedRecipeScreen />;
+  // }
 
   return (
     <SafeAreaView style={styles.container}>
