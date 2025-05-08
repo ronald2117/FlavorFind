@@ -5,3 +5,5 @@ git config --unset user.email
 git credential-cache exit
 git credential-reject
 git push
+
+git test

@@ -32,6 +32,16 @@ function PostNavigator() {
     );
 }
 
+const SavedRecipesStack = createNativeStackNavigator();
+function SavedRecipesNavigator() {
+  return (
+      <SavedRecipesStack.Navigator screenOptions={{ headerShown: false }}>
+          <SavedRecipesStack.Screen name="SavedRecipes" component={SavedRecipesScreen} />
+          <SavedRecipesStack.Screen name="ViewPost" component={ViewPostScreen} />
+      </SavedRecipesStack.Navigator>
+  );
+}
+
 
 const Tab = createBottomTabNavigator();
 
@@ -81,7 +91,7 @@ export default function BottomTabs() {
       />
       <Tab.Screen 
         name="Saved" 
-        component={SavedRecipesScreen}
+        component={SavedRecipesNavigator}
         options={{
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="bookmark-outline" size={24} color={color} />
