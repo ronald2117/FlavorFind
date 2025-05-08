@@ -338,10 +338,7 @@ const styles = StyleSheet.create({
     color: "red",
     fontWeight: "bold",
     marginLeft: 5,
-  },
-  saveButton: {
-    // Add specific styling if needed
-  },
+  }
 });
 
 export default PostCard;
