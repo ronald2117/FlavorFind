@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { FlatList, View, Text, StyleSheet } from 'react-native';
-import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
-import { db, auth } from '../firebaseConfig';
-import PostCard from '../components/PostCard';
-import LoadingScreen from './LoadingScreen';
-import EmptyScreen from './EmptyScreen';
+import React, { useState, useEffect } from "react";
+import { FlatList, StyleSheet, View } from "react-native";
+import { collection, query, where, getDocs, orderBy } from "firebase/firestore";
+import { db, auth } from "../firebaseConfig";
+import PostCard from "../components/PostCard";
+import LoadingScreen from "./LoadingScreen";
+import EmptyScreen from "./EmptyScreen";
 
 export default function MyRecipesScreen() {
   const [items, setItems] = useState([]);
@@ -14,34 +14,46 @@ export default function MyRecipesScreen() {
     setLoading(true);
     try {
       const q = query(
-        collection(db, 'posts'),
-        where('userId', '==', auth.currentUser.uid),
-        orderBy('createdAt', 'desc')
+        collection(db, "posts"),
+        where("userId", "==", auth.currentUser.uid),
+        orderBy("createdAt", "desc")
       );
       const snap = await getDocs(q);
-      setItems(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+      setItems(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
     } catch (err) {
-      console.error('Error fetching recipes:', err);
+      console.error("Error fetching recipes:", err);
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => { fetchRecipes(); }, []);
+  useEffect(() => {
+    fetchRecipes();
+  }, []);
 
   if (loading) return <LoadingScreen />;
   if (items.length === 0) return <EmptyScreen message="No recipes yet." />;
 
   return (
-    <FlatList
-      data={items}
-      keyExtractor={i => i.id}
-      renderItem={({ item }) => <PostCard post={item} currentUserId={auth.currentUser.uid} />}
-      contentContainerStyle={styles.list}
-    />
+    <View style={styles.container}>
+      <FlatList
+        data={items}
+        keyExtractor={(i) => i.id}
+        renderItem={({ item }) => (
+          <PostCard post={item} currentUserId={auth.currentUser.uid} />
+        )}
+        contentContainerStyle={styles.list}
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  list: { flex: 1, backgroundColor: '#000', padding: 10 }
+  container: {
+    flex: 1, // Ensures the FlatList takes up the full screen and scrolls properly
+    backgroundColor: "#000",
+  },
+  list: {
+    padding: 10,
+  },
 });
