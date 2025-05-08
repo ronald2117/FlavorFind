@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import { auth } from '../firebaseConfig';
 import { updateEmail } from 'firebase/auth';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const ChangeEmailScreen = () => {
   const [email, setEmail] = useState('');
@@ -16,7 +17,7 @@ const ChangeEmailScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text style={styles.heading}>Change Email</Text>
       <TextInput
         style={styles.input}
@@ -30,7 +31,7 @@ const ChangeEmailScreen = () => {
       <TouchableOpacity style={styles.button} onPress={handleChangeEmail}>
         <Text style={styles.buttonText}>Update Email</Text>
       </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -54,6 +55,7 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 8,
     marginBottom: 20,
+    marginTop: 5,
   },
   button: {
     backgroundColor: '#2E2E2E',
