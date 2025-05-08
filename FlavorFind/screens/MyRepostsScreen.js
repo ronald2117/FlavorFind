@@ -41,7 +41,7 @@ export default function MyRepostsScreen() {
         data={posts}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <PostCard post={item} currentUserId={auth.currentUser.uid} />
+          <PostCard post={item} currentUserId={auth.currentUser.uid} context="repost"/>
         )}
         contentContainerStyle={styles.list}
         onRefresh={fetchReposts}

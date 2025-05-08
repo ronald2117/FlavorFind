@@ -20,7 +20,7 @@ import {
 import { db, auth } from "../firebaseConfig";
 import { useNavigation } from "@react-navigation/native";
 
-const PostCard = ({ post, currentUserId, context }) => {
+const PostCard = ({ post, currentUserId, context, onReload }) => {
   const [isLiked, setIsLiked] = useState(
     post.likes?.includes(currentUserId) || false
   );
@@ -153,7 +153,6 @@ const PostCard = ({ post, currentUserId, context }) => {
   const handlePostOption = () => {
     if (context === "newsfeed") {
       if (post.userId === currentUserId) {
-        // Show delete option if the post belongs to the user
         Alert.alert(
           "Post Options",
           "What would you like to do?",
@@ -168,7 +167,6 @@ const PostCard = ({ post, currentUserId, context }) => {
           { cancelable: true }
         );
       } else {
-        // Show report option if the post does not belong to the user
         Alert.alert(
           "Post Options",
           "What would you like to do?",
@@ -183,14 +181,29 @@ const PostCard = ({ post, currentUserId, context }) => {
           { cancelable: true }
         );
       }
+    } else if (context == "repost") {
+      Alert.alert(
+        "Repost Options",
+        "What would you like to do?",
+        [
+          {
+            text: "Remove from Reposts",
+            onPress: () => handleRemoveRepost(post.id),
+            style: "destructive",
+          },
+          { text: "Cancel", style: "cancel" },
+        ],
+        { cancelable: true }
+      );
     }
   };
 
   const handleDeletePost = async (postId) => {
     try {
       const postRef = doc(db, "posts", postId);
-      await deleteDoc(postRef); // Deletes the post from Firestore
+      await deleteDoc(postRef);
       alert("Post deleted successfully.");
+      if (onReload) onReload(); // Trigger reload after deletion
     } catch (error) {
       console.error("Error deleting post:", error);
       alert("Failed to delete the post. Please try again.");
@@ -198,8 +211,20 @@ const PostCard = ({ post, currentUserId, context }) => {
   };
 
   const handleReportPost = (postId) => {
-    // Add your reporting logic here
     alert(`Post ${postId} has been reported.`);
+  };
+
+  const handleRemoveRepost = async (postId) => {
+    try {
+      const userRef = doc(db, "users", auth.currentUser.uid);
+      await updateDoc(userRef, {
+        repostedPosts: arrayUnion(postId),
+      });
+      alert("Post removed from your reposts.");
+    } catch (error) {
+      console.error("Error removing repost:", error);
+      alert("Failed to remove the repost. Please try again.");
+    }
   };
 
   return (
@@ -338,7 +363,7 @@ const styles = StyleSheet.create({
     color: "red",
     fontWeight: "bold",
     marginLeft: 5,
-  }
+  },
 });
 
 export default PostCard;

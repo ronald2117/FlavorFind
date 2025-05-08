@@ -32,19 +32,22 @@ export default function MyRecipesScreen() {
   }, []);
 
   if (loading) return <LoadingScreen />;
-  if (items.length === 0) return <EmptyScreen message="No recipes yet." />;
-
   return (
     <View style={styles.container}>
       <FlatList
         data={items}
         keyExtractor={(i) => i.id}
         renderItem={({ item }) => (
-          <PostCard post={item} currentUserId={auth.currentUser.uid} />
+          <PostCard
+            post={item}
+            currentUserId={auth.currentUser.uid}
+            context="newsfeed"
+            onReload={fetchRecipes} // Pass the reload function here
+          />
         )}
         contentContainerStyle={styles.list}
-        onRefresh={fetchRecipes} 
-        refreshing={loading} 
+        onRefresh={fetchRecipes} // Enables pull-to-refresh
+        refreshing={loading}
       />
     </View>
   );
@@ -52,7 +55,7 @@ export default function MyRecipesScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1, 
+    flex: 1,
     backgroundColor: "#000",
   },
   list: {
