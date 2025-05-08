@@ -136,6 +136,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 10,
     paddingTop: 45,
+    marginLeft: 10,
+    fontWeight: 'bold',
   },
   title: {
     color: "#fff",
