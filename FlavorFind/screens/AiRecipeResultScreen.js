@@ -5,6 +5,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
+  Text,
 } from "react-native";
 import FlavorBotLogoWithText from "../components/FlavorBotLogoWithText";
 import * as Clipboard from "expo-clipboard";
@@ -36,7 +37,7 @@ const AiRecipeResultScreen = ({ route }) => {
         style={styles.copyButton}
         onPress={handleCopyToClipboard}
       >
-        <Markdown style={styles.copyButtonText}>Copy Recipe</Markdown>
+        <Text style={styles.copyButtonText}>Copy Recipe</Text>
       </TouchableOpacity>
     </ScrollView>
   );
@@ -55,21 +56,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     marginTop: 30,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#FFD700", // Gold color for the title
-    marginBottom: 20,
-    textAlign: "center",
-  },
-  recipeText: {
-    fontSize: 16,
-    color: "#FFF",
-    lineHeight: 24,
-    marginBottom: 30,
-  },
   copyButton: {
-    backgroundColor: "#1E90FF", // Blue button
+    backgroundColor: "#3B3B3B", // Blue button
     paddingVertical: 12,
     borderRadius: 8,
     alignItems: "center",
