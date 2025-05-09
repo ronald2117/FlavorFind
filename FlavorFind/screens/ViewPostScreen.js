@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Image, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { doc, getDoc, collection, addDoc, query, orderBy, getDocs, serverTimestamp } from 'firebase/firestore';
+import { doc, getDoc, collection, addDoc, query, orderBy, getDocs, serverTimestamp, updateDoc } from 'firebase/firestore';
 import { db, auth } from '../firebaseConfig';
 import PostCard from '../components/PostCard';
 import DefaultProfilePic from '../components/DefaultProfilePic';
@@ -27,21 +27,28 @@ const ViewPostScreen = ({ route, navigation }) => {
   };
 
   const fetchComments = async () => {
-    try {
-      const commentsQuery = query(
-        collection(db, 'posts', postId, 'comments'),
-        orderBy('createdAt', 'asc')
-      );
-      const querySnapshot = await getDocs(commentsQuery);
-      const commentsData = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setComments(commentsData);
-    } catch (error) {
-      console.error('Error fetching comments:', error);
-    }
-  };
+  try {
+    const commentsQuery = query(
+      collection(db, 'posts', postId, 'comments'),
+      orderBy('createdAt', 'asc')
+    );
+    const querySnapshot = await getDocs(commentsQuery);
+    const commentsData = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    setComments(commentsData);
+
+    const commentCount = querySnapshot.size;
+    const postRef = doc(db, 'posts', postId);
+    await updateDoc(postRef, {
+      commentCount: commentCount,
+    });
+  } catch (error) {
+    console.error('Error fetching comments:', error);
+  }
+};
+
 
   const addComment = async () => {
     if (newComment.trim() === '') return;
@@ -62,7 +69,6 @@ const ViewPostScreen = ({ route, navigation }) => {
 
   const handleLikeComment = (commentId) => {
     console.log(`Liked comment with ID: ${commentId}`);
-    // Add logic to handle liking a comment
   };
 
   useEffect(() => {
