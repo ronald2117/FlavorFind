@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Image, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { doc, getDoc, collection, addDoc, query, orderBy, getDocs, serverTimestamp, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, collection, addDoc, query, orderBy, getDocs, serverTimestamp, updateDoc, increment } from 'firebase/firestore';
 import { db, auth } from '../firebaseConfig';
 import PostCard from '../components/PostCard';
 import DefaultProfilePic from '../components/DefaultProfilePic';
@@ -27,27 +27,27 @@ const ViewPostScreen = ({ route, navigation }) => {
   };
 
   const fetchComments = async () => {
-  try {
-    const commentsQuery = query(
-      collection(db, 'posts', postId, 'comments'),
-      orderBy('createdAt', 'asc')
-    );
-    const querySnapshot = await getDocs(commentsQuery);
-    const commentsData = querySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-    setComments(commentsData);
+    try {
+      const commentsQuery = query(
+        collection(db, 'posts', postId, 'comments'),
+        orderBy('createdAt', 'asc')
+      );
+      const querySnapshot = await getDocs(commentsQuery);
+      const commentsData = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setComments(commentsData);
 
-    const commentCount = querySnapshot.size;
-    const postRef = doc(db, 'posts', postId);
-    await updateDoc(postRef, {
-      commentCount: commentCount,
-    });
-  } catch (error) {
-    console.error('Error fetching comments:', error);
-  }
-};
+      const commentCount = querySnapshot.size;
+      const postRef = doc(db, 'posts', postId);
+      await updateDoc(postRef, {
+        commentCount: commentCount,
+      });
+    } catch (error) {
+      console.error('Error fetching comments:', error);
+    }
+  };
 
 
   const addComment = async () => {
@@ -61,14 +61,39 @@ const ViewPostScreen = ({ route, navigation }) => {
         username: auth.currentUser.displayName || 'Anonymous',
       });
       setNewComment('');
-      fetchComments(); // Refresh comments after adding a new one
+      fetchComments();
     } catch (error) {
       console.error('Error adding comment:', error);
     }
   };
 
-  const handleLikeComment = (commentId) => {
-    console.log(`Liked comment with ID: ${commentId}`);
+  const handleLikeComment = async (commentId) => {
+    try {
+      const commentRef = doc(db, 'posts', postId, 'comments', commentId);
+      const commentSnap = await getDoc(commentRef);
+
+      if (commentSnap.exists()) {
+        const commentData = commentSnap.data();
+        const userLikes = commentData.userLikes || [];
+
+        if (userLikes.includes(auth.currentUser.uid)) {
+          await updateDoc(commentRef, {
+            likes: increment(-1),
+            userLikes: userLikes.filter((uid) => uid !== auth.currentUser.uid),
+          });
+        } else {
+          // Like the comment
+          await updateDoc(commentRef, {
+            likes: increment(1),
+            userLikes: [...userLikes, auth.currentUser.uid],
+          });
+        }
+
+        fetchComments();
+      }
+    } catch (error) {
+      console.error('Error liking/unliking comment:', error);
+    }
   };
 
   useEffect(() => {
@@ -104,17 +129,18 @@ const ViewPostScreen = ({ route, navigation }) => {
           renderItem={({ item }) => (
             <View style={styles.comment}>
               <DefaultProfilePic style={styles.commentProfilePicContainer} />
-              {/* <Image
-              source={require('../assets/default-profile.png')} // Replace with actual profile picture if available
-              style={styles.commentProfilePic}
-            /> */}
               <View style={styles.commentContent}>
                 <Text style={styles.commentUsername}>{item.username}</Text>
                 <Text style={styles.commentText}>{item.text}</Text>
                 <View style={styles.commentActions}>
                   <TouchableOpacity onPress={() => handleLikeComment(item.id)} style={styles.commentLikeButton}>
-                    <Ionicons name="heart-outline" size={16} color="#555" />
-                    <Text style={styles.commentLikeText}>Like</Text>
+                    <Ionicons
+                      name="heart"
+                      size={16}
+                      color={item.userLikes?.includes(auth.currentUser?.uid) ? "red" : "#555"}
+                      style={{ marginLeft: 4 }}
+                    />
+                    <Text style={styles.commentLikeCount}>{item.likes || 0}</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -122,6 +148,7 @@ const ViewPostScreen = ({ route, navigation }) => {
           )}
           contentContainerStyle={styles.commentsList}
         />
+
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           style={styles.addCommentContainer}
@@ -245,6 +272,13 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 18
   },
+  commentLikeCount: {
+  color: '#555',
+  fontWeight: 'bold',
+  fontSize: 14,
+  marginRight: 4,
+  marginLeft: 3,
+},
 });
 
 export default ViewPostScreen;
