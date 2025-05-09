@@ -6,6 +6,7 @@ import { doc, getDoc, collection, addDoc, query, orderBy, getDocs, serverTimesta
 import { db, auth } from '../firebaseConfig';
 import PostCard from '../components/PostCard';
 import DefaultProfilePic from '../components/DefaultProfilePic';
+import { Animated } from 'react-native';
 
 const ViewPostScreen = ({ route, navigation }) => {
   const { postId } = route.params;
@@ -35,6 +36,7 @@ const ViewPostScreen = ({ route, navigation }) => {
       const querySnapshot = await getDocs(commentsQuery);
       const commentsData = querySnapshot.docs.map((doc) => ({
         id: doc.id,
+        scale: new Animated.Value(1), // add this
         ...doc.data(),
       }));
       setComments(commentsData);
@@ -48,6 +50,7 @@ const ViewPostScreen = ({ route, navigation }) => {
       console.error('Error fetching comments:', error);
     }
   };
+
 
 
   const addComment = async () => {
@@ -69,6 +72,9 @@ const ViewPostScreen = ({ route, navigation }) => {
 
   const handleLikeComment = async (commentId) => {
     try {
+      const index = comments.findIndex(c => c.id === commentId);
+      if (index === -1) return;
+
       const commentRef = doc(db, 'posts', postId, 'comments', commentId);
       const commentSnap = await getDoc(commentRef);
 
@@ -79,14 +85,26 @@ const ViewPostScreen = ({ route, navigation }) => {
         if (userLikes.includes(auth.currentUser.uid)) {
           await updateDoc(commentRef, {
             likes: increment(-1),
-            userLikes: userLikes.filter((uid) => uid !== auth.currentUser.uid),
+            userLikes: userLikes.filter(uid => uid !== auth.currentUser.uid),
           });
         } else {
-          // Like the comment
           await updateDoc(commentRef, {
             likes: increment(1),
             userLikes: [...userLikes, auth.currentUser.uid],
           });
+
+          Animated.sequence([
+            Animated.timing(comments[index].scale, {
+              toValue: 1.5,
+              duration: 150,
+              useNativeDriver: true,
+            }),
+            Animated.timing(comments[index].scale, {
+              toValue: 1,
+              duration: 150,
+              useNativeDriver: true,
+            }),
+          ]).start();
         }
 
         fetchComments();
@@ -134,12 +152,15 @@ const ViewPostScreen = ({ route, navigation }) => {
                 <Text style={styles.commentText}>{item.text}</Text>
                 <View style={styles.commentActions}>
                   <TouchableOpacity onPress={() => handleLikeComment(item.id)} style={styles.commentLikeButton}>
-                    <Ionicons
-                      name="heart"
-                      size={16}
-                      color={item.userLikes?.includes(auth.currentUser?.uid) ? "red" : "#555"}
-                      style={{ marginLeft: 4 }}
-                    />
+                    <Animated.View style={{ transform: [{ scale: item.scale }] }}>
+                      <Ionicons
+                        name="heart"
+                        size={16}
+                        color={item.userLikes?.includes(auth.currentUser?.uid) ? "red" : "#555"}
+                        style={{ marginLeft: 4 }}
+                      />
+                    </Animated.View>
+
                     <Text style={styles.commentLikeCount}>{item.likes || 0}</Text>
                   </TouchableOpacity>
                 </View>
@@ -273,12 +294,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18
   },
   commentLikeCount: {
-  color: '#555',
-  fontWeight: 'bold',
-  fontSize: 14,
-  marginRight: 4,
-  marginLeft: 3,
-},
+    color: '#555',
+    fontWeight: 'bold',
+    fontSize: 14,
+    marginRight: 4,
+    marginLeft: 3,
+  },
 });
 
 export default ViewPostScreen;
