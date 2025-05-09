@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Image } from 'react-native';
+import { View, Text, FlatList, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Image, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { doc, getDoc, collection, addDoc, query, orderBy, getDocs, serverTimestamp } from 'firebase/firestore';
@@ -81,52 +81,57 @@ const ViewPostScreen = ({ route, navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Ionicons name="chevron-back-outline" size={24} color="white" onPress={() => navigation.goBack()} />
-        <Text style={styles.headerTitle}>Post Details</Text>
-      </View>
-      {post && (
-        <PostCard post={post} currentUserId={auth.currentUser?.uid} />
-      )}
-      <FlatList
-        data={comments}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={styles.comment}>
-            <DefaultProfilePic/>
-            {/* <Image
+      <ScrollView>
+        <View style={styles.header}>
+          <Ionicons name="chevron-back-outline" size={24} color="white" onPress={() => navigation.goBack()} />
+          <Text style={styles.headerTitle}>Post Details</Text>
+        </View>
+        {post && (
+          <PostCard post={post} currentUserId={auth.currentUser?.uid} />
+        )}
+
+        <Text style={styles.replies}>Replies</Text>
+        <FlatList
+          data={comments}
+          scrollEnabled={false}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <View style={styles.comment}>
+              <DefaultProfilePic style={styles.commentProfilePicContainer} />
+              {/* <Image
               source={require('../assets/default-profile.png')} // Replace with actual profile picture if available
               style={styles.commentProfilePic}
             /> */}
-            <View style={styles.commentContent}>
-              <Text style={styles.commentUsername}>{item.username}</Text>
-              <Text style={styles.commentText}>{item.text}</Text>
-              <View style={styles.commentActions}>
-                <TouchableOpacity onPress={() => handleLikeComment(item.id)} style={styles.commentLikeButton}>
-                  <Ionicons name="heart-outline" size={16} color="#555" />
-                  <Text style={styles.commentLikeText}>Like</Text>
-                </TouchableOpacity>
+              <View style={styles.commentContent}>
+                <Text style={styles.commentUsername}>{item.username}</Text>
+                <Text style={styles.commentText}>{item.text}</Text>
+                <View style={styles.commentActions}>
+                  <TouchableOpacity onPress={() => handleLikeComment(item.id)} style={styles.commentLikeButton}>
+                    <Ionicons name="heart-outline" size={16} color="#555" />
+                    <Text style={styles.commentLikeText}>Like</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
-          </View>
-        )}
-        contentContainerStyle={styles.commentsList}
-      />
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        style={styles.addCommentContainer}
-      >
-        <TextInput
-          style={styles.commentInput}
-          placeholder="Add a comment..."
-          placeholderTextColor="#888"
-          value={newComment}
-          onChangeText={setNewComment}
+          )}
+          contentContainerStyle={styles.commentsList}
         />
-        <TouchableOpacity onPress={addComment} style={styles.sendButton}>
-          <Ionicons name="send" size={20} color="white" />
-        </TouchableOpacity>
-      </KeyboardAvoidingView>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          style={styles.addCommentContainer}
+        >
+          <TextInput
+            style={styles.commentInput}
+            placeholder="Add a comment..."
+            placeholderTextColor="#888"
+            value={newComment}
+            onChangeText={setNewComment}
+          />
+          <TouchableOpacity onPress={addComment} style={styles.sendButton}>
+            <Ionicons name="send" size={20} color="white" />
+          </TouchableOpacity>
+        </KeyboardAvoidingView>
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -166,6 +171,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   commentProfilePic: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+  },
+  commentProfilePicContainer: {
     width: 40,
     height: 40,
     borderRadius: 20,
@@ -216,6 +226,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFD700',
     padding: 10,
     borderRadius: 8,
+  },
+  replies: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginLeft: 10,
+    marginTop: 10,
+    marginBottom: 10,
+    borderTopWidth: 1,
+    borderTopColor: 'white',
+    paddingVertical: 12,
+    paddingHorizontal: 18
   },
 });
 
