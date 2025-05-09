@@ -122,7 +122,7 @@ const AiRecipeFormScreen = () => {
           </Text>
           <TextInput
             style={styles.input}
-            placeholder="stir fried"
+            placeholder="vegetarian, without oil"
             placeholderTextColor="#ccc"
             value={preferences}
             onChangeText={setPreferences}
