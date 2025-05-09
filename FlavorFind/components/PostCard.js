@@ -16,6 +16,7 @@ import {
   arrayUnion,
   getDoc,
   deleteDoc,
+  arrayRemove,
 } from "firebase/firestore";
 import { db, auth } from "../firebaseConfig";
 import { useNavigation } from "@react-navigation/native";
@@ -216,16 +217,20 @@ const PostCard = ({ post, currentUserId, context, onReload }) => {
 
   const handleRemoveRepost = async (postId) => {
     try {
-      const userRef = doc(db, "users", auth.currentUser.uid);
-      await updateDoc(userRef, {
-        repostedPosts: arrayUnion(postId),
+      const postRef = doc(db, "posts", postId);
+      await updateDoc(postRef, {
+        repostedBy: arrayRemove(auth.currentUser.uid),
       });
+
       alert("Post removed from your reposts.");
+
+      if (onReload) onReload();
     } catch (error) {
       console.error("Error removing repost:", error);
       alert("Failed to remove the repost. Please try again.");
     }
   };
+
 
   return (
     <View style={styles.card}>
