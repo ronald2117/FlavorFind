@@ -1,48 +1,61 @@
-import React, { useState, useEffect } from 'react';
-import { View, FlatList, StyleSheet, Text, Button } from 'react-native';
-import { collection, getDocs, query, orderBy, doc, getDoc,} from 'firebase/firestore';
-import { db, auth } from '../firebaseConfig';
-import PostCard from '../components/PostCard';
-import { useNavigation, useIsFocused } from '@react-navigation/native';
-import LogoText from '../components/LogoText';
-import { Ionicons } from '@expo/vector-icons';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import LoadingScreen from './LoadingScreen';
+import React, { useState, useEffect } from "react";
+import { View, FlatList, StyleSheet, Text, Button } from "react-native";
+import {
+  collection,
+  getDocs,
+  query,
+  orderBy,
+  doc,
+  getDoc,
+} from "firebase/firestore";
+import { db, auth } from "../firebaseConfig";
+import PostCard from "../components/PostCard";
+import { useIsFocused } from "@react-navigation/native";
+import LogoText from "../components/LogoText";
+import { SafeAreaView } from "react-native-safe-area-context";
+import LoadingScreen from "./LoadingScreen";
 
 const FeedScreen = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigation = useNavigation();
   const isFocused = useIsFocused();
 
   const fetchPosts = async () => {
     setLoading(true);
     setError(null);
     try {
-      const postsQuery = query(collection(db, 'posts'), orderBy('createdAt', 'desc'));
+      const postsQuery = query(
+        collection(db, "posts"),
+        orderBy("createdAt", "desc")
+      );
       const querySnapshot = await getDocs(postsQuery);
-      const postsData = await Promise.all(querySnapshot.docs.map(async (postDoc) => {
-        const postData = postDoc.data();
-        let username = postData.username;
-        if (!username && postData.userId) {
-          try {
-            const userRef = doc(db, 'users', postData.userId);
-            const userSnap = await getDoc(userRef);
-            if (userSnap.exists()) {
-              username = userSnap.data().username || 'Unknown User';
+      const postsData = await Promise.all(
+        querySnapshot.docs.map(async (postDoc) => {
+          const postData = postDoc.data();
+          let username = postData.username;
+          if (!username && postData.userId) {
+            try {
+              const userRef = doc(db, "users", postData.userId);
+              const userSnap = await getDoc(userRef);
+              if (userSnap.exists()) {
+                username = userSnap.data().username || "Unknown User";
+              }
+            } catch (userError) {
+              console.warn(
+                `Could not fetch user data for post ${postDoc.id}:`,
+                userError
+              );
             }
-          } catch (userError) {
-            console.warn(`Could not fetch user data for post ${postDoc.id}:`, userError);
           }
-        }
 
-        return {
-          id: postDoc.id,
-          ...postData,
-          username: username || 'Anonymous',
-        };
-      }));
+          return {
+            id: postDoc.id,
+            ...postData,
+            username: username || "Anonymous",
+          };
+        })
+      );
       setPosts(postsData);
     } catch (err) {
       console.error("Error fetching posts: ", err);
@@ -53,7 +66,7 @@ const FeedScreen = () => {
   };
 
   useEffect(() => {
-    if (isFocused) { 
+    if (isFocused) {
       fetchPosts();
     }
   }, [isFocused]);
@@ -63,20 +76,24 @@ const FeedScreen = () => {
   }
 
   if (error) {
-    return <View style={styles.centered}><Text>{error}</Text></View>;
+    return (
+      <View style={styles.centered}>
+        <Text>{error}</Text>
+      </View>
+    );
   }
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <LogoText />
-        <Ionicons
+        <LogoText style={{ marginLeft: 15 }} />
+        {/* <Ionicons
           name="search"
           size={30}
           color="white"
           onPress={() => navigation.navigate('Search')}
           style={{ marginRight: 15 }}
-        />
+        /> */}
       </View>
       <FlatList
         data={posts}
@@ -84,11 +101,13 @@ const FeedScreen = () => {
           <PostCard
             post={item}
             currentUserId={auth.currentUser?.uid}
+            context="newsfeed"
+            onReload={fetchPosts} 
           />
         )}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContent}
-        onRefresh={fetchPosts} 
+        onRefresh={fetchPosts}
         refreshing={loading}
       />
     </SafeAreaView>
@@ -98,19 +117,19 @@ const FeedScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000000',
+    backgroundColor: "#000000",
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     padding: 5,
-    backgroundColor: '#111',
+    backgroundColor: "#111",
   },
   centered: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   listContent: {
     paddingBottom: 20,

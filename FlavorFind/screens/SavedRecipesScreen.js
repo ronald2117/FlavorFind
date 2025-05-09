@@ -1,11 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { View, FlatList, StyleSheet, Text, Alert, TouchableOpacity, SafeAreaView } from 'react-native';
-import { collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore';
-import { db, auth } from '../firebaseConfig';
-import PostCard from '../components/PostCard';
-import LoadingScreen from './LoadingScreen';
-import EmptySavedRecipeScreen from './EmptySavedRecipeScreen';
-import { Ionicons } from '@expo/vector-icons';
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  FlatList,
+  StyleSheet,
+  Text,
+  SafeAreaView,
+} from "react-native";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  doc,
+  getDoc,
+} from "firebase/firestore";
+import { db, auth } from "../firebaseConfig";
+import PostCard from "../components/PostCard";
+import LoadingScreen from "./LoadingScreen";
+import EmptySavedRecipeScreen from "./EmptySavedRecipeScreen";
 
 const SavedRecipesScreen = () => {
   const [savedRecipes, setSavedRecipes] = useState([]);
@@ -18,14 +30,14 @@ const SavedRecipesScreen = () => {
     try {
       const userId = auth.currentUser?.uid;
       if (!userId) {
-        throw new Error('User not logged in.');
+        throw new Error("User not logged in.");
       }
 
-      const userRef = doc(db, 'users', userId);
+      const userRef = doc(db, "users", userId);
       const userSnap = await getDoc(userRef);
 
       if (!userSnap.exists()) {
-        throw new Error('User data not found.');
+        throw new Error("User data not found.");
       }
 
       const savedPosts = userSnap.data().savedPosts || [];
@@ -34,7 +46,10 @@ const SavedRecipesScreen = () => {
         return;
       }
 
-      const postsQuery = query(collection(db, 'posts'), where('__name__', 'in', savedPosts));
+      const postsQuery = query(
+        collection(db, "posts"),
+        where("__name__", "in", savedPosts)
+      );
       const querySnapshot = await getDocs(postsQuery);
 
       const recipes = querySnapshot.docs.map((doc) => ({
@@ -44,8 +59,8 @@ const SavedRecipesScreen = () => {
 
       setSavedRecipes(recipes);
     } catch (err) {
-      console.error('Error fetching saved recipes:', err);
-      setError('Failed to load saved recipes. Please try again.');
+      console.error("Error fetching saved recipes:", err);
+      setError("Failed to load saved recipes. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -67,9 +82,9 @@ const SavedRecipesScreen = () => {
     );
   }
 
-  if (savedRecipes.length === 0) {
-    return <EmptySavedRecipeScreen />;
-  }
+  // if (savedRecipes.length === 0) {
+  //   return <EmptySavedRecipeScreen />;
+  // }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -82,13 +97,12 @@ const SavedRecipesScreen = () => {
       <FlatList
         data={savedRecipes}
         renderItem={({ item }) => (
-          <PostCard
-            post={item}
-            currentUserId={auth.currentUser?.uid}
-          />
+          <PostCard post={item} currentUserId={auth.currentUser?.uid} />
         )}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContent}
+        onRefresh={fetchSavedRecipes} 
+        refreshing={loading} 
       />
     </SafeAreaView>
   );
@@ -97,34 +111,36 @@ const SavedRecipesScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
+    backgroundColor: "#000",
   },
   centered: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   errorText: {
-    color: '#f00',
+    color: "#f00",
     fontSize: 16,
-    textAlign: 'center',
+    textAlign: "center",
   },
   emptyText: {
-    color: '#000',
+    color: "#000",
     fontSize: 16,
-    textAlign: 'center',
+    textAlign: "center",
   },
   listContent: {
     padding: 10,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     padding: 10,
     paddingTop: 45,
+    marginLeft: 10,
+    fontWeight: 'bold',
   },
   title: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 24,
   },
   // backButton: {
