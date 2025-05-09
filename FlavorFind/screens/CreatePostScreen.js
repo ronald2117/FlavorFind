@@ -177,7 +177,7 @@ export default function CreatePostScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: '#000' },
+  safe: { flex: 1, backgroundColor: '#111' },
   flex: { flex: 1 },
   container: { padding: 20, flexGrow: 1, justifyContent: 'flex-start' },
   title: { fontSize: 24, fontWeight: '700', marginBottom: 20, color: '#fff' },

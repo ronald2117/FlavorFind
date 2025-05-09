@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FlatList, StyleSheet, View } from "react-native";
+import { FlatList, StyleSheet, View, Text } from "react-native";
 import { collection, query, where, getDocs, orderBy } from "firebase/firestore";
 import { db, auth } from "../firebaseConfig";
 import PostCard from "../components/PostCard";
@@ -42,13 +42,21 @@ export default function MyRecipesScreen() {
             post={item}
             currentUserId={auth.currentUser.uid}
             context="newsfeed"
-            onReload={fetchRecipes} // Pass the reload function here
+            onReload={fetchRecipes}
           />
         )}
-        contentContainerStyle={styles.list}
-        onRefresh={fetchRecipes} // Enables pull-to-refresh
+        contentContainerStyle={
+          items.length === 0
+            ? [styles.list, styles.centered]
+            : styles.list
+        }
+        onRefresh={fetchRecipes}
         refreshing={loading}
+        ListEmptyComponent={
+          <Text style={styles.emptyText}>There is nothing here.</Text>
+        }
       />
+
     </View>
   );
 }
@@ -56,9 +64,21 @@ export default function MyRecipesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#000",
+    backgroundColor: "#111",
   },
   list: {
     padding: 10,
+    flexGrow: 1, // Ensures centering works when FlatList is empty
   },
+  centered: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  emptyText: {
+    color: "#aaa",
+    fontSize: 16,
+    textAlign: "center",
+    paddingVertical: 20,
+  },
+
 });

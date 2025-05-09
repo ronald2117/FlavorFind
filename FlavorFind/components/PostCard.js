@@ -303,7 +303,7 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   card: {
-    backgroundColor: "#000",
+    backgroundColor: "#111",
     borderRadius: 8,
     padding: 15,
     marginVertical: 8,

@@ -193,7 +193,7 @@ const ViewPostScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
+    backgroundColor: '#111',
   },
   header: {
     flexDirection: 'row',
@@ -277,7 +277,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   sendButton: {
-    backgroundColor: '#FFD700',
+    backgroundColor: '#333',
     padding: 10,
     borderRadius: 8,
   },

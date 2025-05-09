@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { FlatList, StyleSheet, View } from "react-native";
+import { FlatList, StyleSheet, View, Text } from "react-native";
 import { db, auth } from "../firebaseConfig";
 import { collection, getDocs, query, where, orderBy } from "firebase/firestore";
 import PostCard from "../components/PostCard";
 import LoadingScreen from "./LoadingScreen";
-import EmptyScreen from "./EmptyScreen";
 
 export default function MyLikesScreen() {
   const [likedPosts, setLikedPosts] = useState([]);
@@ -32,8 +31,6 @@ export default function MyLikesScreen() {
   }, []);
 
   if (loading) return <LoadingScreen />;
-  if (likedPosts.length === 0)
-    return <EmptyScreen message="You haven’t liked any posts yet." />;
 
   return (
     <View style={styles.container}>
@@ -43,9 +40,16 @@ export default function MyLikesScreen() {
         renderItem={({ item }) => (
           <PostCard post={item} currentUserId={auth.currentUser.uid} />
         )}
-        contentContainerStyle={styles.list}
-        onRefresh={fetchLikedPosts} // Enables pull-to-refresh
-        refreshing={loading} // Shows spinner while refreshing
+        contentContainerStyle={
+          likedPosts.length === 0
+            ? [styles.list, styles.centered]
+            : styles.list
+        }
+        onRefresh={fetchLikedPosts}
+        refreshing={loading}
+        ListEmptyComponent={
+          <Text style={styles.emptyText}>There is nothing here.</Text>
+        }
       />
     </View>
   );
@@ -53,10 +57,21 @@ export default function MyLikesScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1, // Ensures the FlatList takes up the full screen and scrolls properly
-    backgroundColor: "#000",
+    flex: 1,
+    backgroundColor: "#111",
   },
   list: {
     padding: 10,
+    flexGrow: 1, // Needed for vertical centering when empty
+  },
+  centered: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  emptyText: {
+    color: "#aaa",
+    fontSize: 16,
+    textAlign: "center",
+    paddingVertical: 20,
   },
 });

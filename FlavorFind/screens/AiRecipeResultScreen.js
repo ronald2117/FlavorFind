@@ -46,7 +46,7 @@ const AiRecipeResultScreen = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#000",
+    backgroundColor: "#111",
   },
   scrollContainer: {
     padding: 20,

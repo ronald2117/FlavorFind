@@ -58,7 +58,7 @@ const AiRecipeFormScreen = () => {
         },
         {
           headers: {
-            Authorization: `Bearer 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`,
+            Authorization: `Bearer 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`,
             "Content-Type": "application/json",
           },
         }
@@ -78,7 +78,7 @@ const AiRecipeFormScreen = () => {
     // Render loading screen while generating recipe
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#fff" />
+        <ActivityIndicator size="large" color="#fff"  />
         <Text style={styles.loadingText}>Generating your recipe...</Text>
       </View>
     );
@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: "#000",
+    backgroundColor: "#111",
   },
   scrollContainer: {
     flexGrow: 1,
@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#000",
+    backgroundColor: "#111",
   },
   loadingText: {
     color: "#fff",

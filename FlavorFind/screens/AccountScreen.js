@@ -50,7 +50,7 @@ export default function AccountScreen() {
     );
 }
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#000' },
+    container: { flex: 1, backgroundColor: '#111' },
     header: { padding: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginLeft: 15 },
     name: { color: '#fff', fontSize: 24 },
     email: { color: '#aaa', fontSize: 14 },

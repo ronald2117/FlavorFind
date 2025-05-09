@@ -100,10 +100,17 @@ const SavedRecipesScreen = () => {
           <PostCard post={item} currentUserId={auth.currentUser?.uid} />
         )}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContent}
-        onRefresh={fetchSavedRecipes} 
-        refreshing={loading} 
+        contentContainerStyle={[
+          styles.listContent,
+          savedRecipes.length === 0 && styles.centered, // center "nothing here" text
+        ]}
+        onRefresh={fetchSavedRecipes}
+        refreshing={loading}
+        ListEmptyComponent={
+          <Text style={styles.emptyText}>There is nothing here.</Text>
+        }
       />
+
     </SafeAreaView>
   );
 };
@@ -111,7 +118,7 @@ const SavedRecipesScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#000",
+    backgroundColor: "#111",
   },
   centered: {
     flex: 1,
@@ -143,9 +150,12 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 24,
   },
-  // backButton: {
-  //   marginRight: 5,
-  // }
+  emptyText: {
+    color: "#aaa",
+    fontSize: 16,
+    textAlign: "center",
+    paddingVertical: 20,
+  },
 });
 
 export default SavedRecipesScreen;

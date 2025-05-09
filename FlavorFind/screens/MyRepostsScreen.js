@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { FlatList, StyleSheet, View } from "react-native";
+import { FlatList, StyleSheet, View, Text } from "react-native";
 import { db, auth } from "../firebaseConfig";
 import { collection, getDocs, query, where, orderBy } from "firebase/firestore";
 import PostCard from "../components/PostCard";
 import LoadingScreen from "./LoadingScreen";
-import EmptyScreen from "./EmptyScreen";
 
 export default function MyRepostsScreen() {
   const [posts, setPosts] = useState([]);
@@ -32,8 +31,6 @@ export default function MyRepostsScreen() {
   }, []);
 
   if (loading) return <LoadingScreen />;
-  if (posts.length === 0)
-    return <EmptyScreen message="You haven’t reposted anything yet." />;
 
   return (
     <View style={styles.container}>
@@ -41,11 +38,18 @@ export default function MyRepostsScreen() {
         data={posts}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <PostCard post={item} currentUserId={auth.currentUser.uid} context="repost"/>
+          <PostCard post={item} currentUserId={auth.currentUser.uid} context="repost" />
         )}
-        contentContainerStyle={styles.list}
+        contentContainerStyle={
+          posts.length === 0
+            ? [styles.list, styles.centered]
+            : styles.list
+        }
         onRefresh={fetchReposts}
         refreshing={loading}
+        ListEmptyComponent={
+          <Text style={styles.emptyText}>You haven’t reposted anything yet.</Text>
+        }
       />
     </View>
   );
@@ -58,5 +62,16 @@ const styles = StyleSheet.create({
   },
   list: {
     padding: 10,
+    flexGrow: 1,
+  },
+  centered: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  emptyText: {
+    color: "#aaa",
+    fontSize: 16,
+    textAlign: "center",
+    paddingVertical: 20,
   },
 });
