@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
-import * as SplashScreen from 'expo-splash-screen';
-import Logo from '../components/Logo';
+import { useTheme } from '../ThemeContext';
 
 const CustomSplashScreen = ({ onReady }) => {
+  
   useEffect(() => {
     const prepare = async () => {
       await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -15,7 +15,7 @@ const CustomSplashScreen = ({ onReady }) => {
 
   return (
     <View style={styles.container}>
-        <Logo style={styles.image} />
+        <Image source={require('../assets/welcome-icon.png')} style={styles.image} />
       <Text style={styles.text}>Nomadic. Nostalgic. New.</Text>
     </View>
   );
@@ -26,17 +26,17 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#111',
+    backgroundColor: '#fff',
   },
   image: {
-    width: 150,
-    height: 150,
+    width: 220,
+    height: 200,
     marginBottom: 20,
   },
   text: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#fff',
+    color: '#00',
   },
 });
 
