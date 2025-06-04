@@ -18,11 +18,51 @@ import { db, auth } from "../firebaseConfig";
 import PostCard from "../components/PostCard";
 import LoadingScreen from "./LoadingScreen";
 import EmptySavedRecipeScreen from "./EmptySavedRecipeScreen";
+import { useTheme } from "../ThemeContext";
 
 const SavedRecipesScreen = () => {
   const [savedRecipes, setSavedRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { theme } = useTheme();
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.background,
+    },
+    centered: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    errorText: {
+      color: "#f00",
+      fontSize: 16,
+      textAlign: "center",
+    },
+    emptyText: {
+      color: theme.placeholder,
+      fontSize: 16,
+      textAlign: "center",
+      paddingVertical: 20,
+    },
+    listContent: {
+      padding: 10,
+    },
+    header: {
+      flexDirection: "row",
+      alignItems: "center",
+      padding: 10,
+      paddingTop: 45,
+      marginLeft: 10,
+      fontWeight: 'bold',
+    },
+    title: {
+      color: theme.text,
+      fontSize: 24,
+    },
+  });
 
   const fetchSavedRecipes = async () => {
     setLoading(true);
@@ -114,48 +154,5 @@ const SavedRecipesScreen = () => {
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#111",
-  },
-  centered: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  errorText: {
-    color: "#f00",
-    fontSize: 16,
-    textAlign: "center",
-  },
-  emptyText: {
-    color: "#000",
-    fontSize: 16,
-    textAlign: "center",
-  },
-  listContent: {
-    padding: 10,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 10,
-    paddingTop: 45,
-    marginLeft: 10,
-    fontWeight: 'bold',
-  },
-  title: {
-    color: "#fff",
-    fontSize: 24,
-  },
-  emptyText: {
-    color: "#aaa",
-    fontSize: 16,
-    textAlign: "center",
-    paddingVertical: 20,
-  },
-});
 
 export default SavedRecipesScreen;

@@ -73,7 +73,7 @@ export default function App() {
     <ThemeProvider>
       <NavigationContainer>
         {user ? <AppTabs /> : <AuthStack />}
-      </NavigationContainer>r
+      </NavigationContainer>
     </ThemeProvider>
   );
 }

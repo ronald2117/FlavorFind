@@ -2,7 +2,7 @@ import * as React from "react"
 import Svg, { Circle, Path } from "react-native-svg"
 
 function DefaultProfilePic(props) {
-  const strokeColor = props.stroke || {strokeColor};
+  const strokeColor = props.stroke || '#fff';
   return (
     <Svg
     width={props.width || 40}
