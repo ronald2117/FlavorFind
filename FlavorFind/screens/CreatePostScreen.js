@@ -17,6 +17,7 @@ import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db, auth } from '../firebaseConfig';
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTheme } from '../ThemeContext';
 
 const MAX_CHAR = 500;
 
@@ -30,6 +31,43 @@ export default function CreatePostScreen() {
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const navigation = useNavigation();
+  const { theme } = useTheme();
+
+  const styles = StyleSheet.create({
+    safe: { flex: 1, backgroundColor: theme.background },
+    flex: { flex: 1 },
+    container: { padding: 20, flexGrow: 1, justifyContent: 'flex-start' },
+    title: { fontSize: 24, fontWeight: '700', marginBottom: 20, color: theme.text },
+    label: { fontSize: 16, fontWeight: '600', marginBottom: 8, color: theme.text },
+    input: {
+      borderWidth: 1,
+      borderColor: theme.placeholder,
+      borderRadius: 8,
+      padding: 12,
+      fontSize: 16,
+      backgroundColor: theme.inputBG,
+      color: theme.text,
+      minHeight: 100,
+      textAlignVertical: 'top',
+    },
+    charCount: { textAlign: 'right', marginBottom: 15, color: theme.placeholder },
+    button: {
+      paddingVertical: 14,
+      borderRadius: 8,
+      alignItems: 'center',
+      marginBottom: 20,
+    },
+    imageButton: { backgroundColor: theme.buttonBG },
+    postButton: { backgroundColor: theme.buttonBG },
+    buttonDisabled: { backgroundColor: theme.buttonBG },
+    buttonText: { color: theme.text, fontSize: 16, fontWeight: '600' },
+    imageWrapper: { marginVertical: 15, alignItems: 'center' },
+    imagePreview: { width: '100%', height: 200, borderRadius: 8 },
+    removeButton: { marginTop: 8 },
+    removeText: { color: '#FF6347', fontSize: 14 },
+    progressContainer: { marginVertical: 15, alignItems: 'center' },
+    progressText: { marginTop: 5, color: theme.text },
+  });
 
   const pickImage = async () => {
     const { granted } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -128,7 +166,7 @@ export default function CreatePostScreen() {
           <TextInput
             style={styles.input}
             placeholder="Share your recipe..."
-            placeholderTextColor="#888"
+            placeholderTextColor={theme.placeholder}
             value={text}
             onChangeText={(t) => t.length <= MAX_CHAR && setText(t)}
             multiline
@@ -158,7 +196,7 @@ export default function CreatePostScreen() {
 
           {uploading && (
             <View style={styles.progressContainer}>
-              <ActivityIndicator size="large" color="#fff" />
+              <ActivityIndicator size="large" color={theme.text} />
               <Text style={styles.progressText}>Uploading...</Text>
             </View>
           )}
@@ -175,39 +213,3 @@ export default function CreatePostScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: '#111' },
-  flex: { flex: 1 },
-  container: { padding: 20, flexGrow: 1, justifyContent: 'flex-start' },
-  title: { fontSize: 24, fontWeight: '700', marginBottom: 20, color: '#fff' },
-  label: { fontSize: 16, fontWeight: '600', marginBottom: 8, color: '#fff' },
-  input: {
-    borderWidth: 1,
-    borderColor: '#555',
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-    backgroundColor: '#222',
-    color: '#fff',
-    minHeight: 100,
-    textAlignVertical: 'top',
-  },
-  charCount: { textAlign: 'right', marginBottom: 15, color: '#aaa' },
-  button: {
-    paddingVertical: 14,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  imageButton: { backgroundColor: '#B8860B' },
-  postButton: { backgroundColor: '#8B0000' },
-  buttonDisabled: { backgroundColor: '#555' },
-  buttonText: { color: '#fff', fontSize: 16, fontWeight: '600' },
-  imageWrapper: { marginVertical: 15, alignItems: 'center' },
-  imagePreview: { width: '100%', height: 200, borderRadius: 8 },
-  removeButton: { marginTop: 8 },
-  removeText: { color: '#FF6347', fontSize: 14 },
-  progressContainer: { marginVertical: 15, alignItems: 'center' },
-  progressText: { marginTop: 5, color: '#fff' },
-});
