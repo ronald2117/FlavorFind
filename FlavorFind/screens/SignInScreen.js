@@ -45,7 +45,7 @@ export default function LoginScreen({ navigation }) {
     },
     passwordInput: {
       flex: 1,
-      color: 'white',
+      color: theme.text,
       borderRadius: 8,
     },
     forgotPassword: {
@@ -118,7 +118,7 @@ export default function LoginScreen({ navigation }) {
           onChangeText={setPassword}
         />
         <TouchableOpacity onPress={() => setSecureText(!secureText)}>
-          <Ionicons name={secureText ? 'eye-off' : 'eye'} size={20} color="#999" />
+          <Ionicons name={secureText ? 'eye-off' : 'eye'} size={20} color={ theme.text } />
         </TouchableOpacity>
       </View>
 

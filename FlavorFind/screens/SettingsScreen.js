@@ -5,9 +5,39 @@ import { auth } from '../firebaseConfig';
 import { signOut } from 'firebase/auth';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTheme } from '../ThemeContext';
 
 const SettingsScreen = () => {
   const navigation = useNavigation();
+  const { theme, toggleTheme } = useTheme();
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.background,
+      padding: 20,
+      color: theme.text,
+    },
+    header: {
+      flexDirection: 'row',
+    },
+    heading: {
+      fontSize: 22,
+      fontWeight: 'bold',
+      color: theme.text,
+      marginBottom: 30,
+    },
+    option: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: 15,
+    },
+    optionText: {
+      color: theme.text,
+      fontSize: 16,
+      marginLeft: 10,
+    },
+  });
 
   const handleLogout = async () => {
     try {
@@ -21,33 +51,37 @@ const SettingsScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-              <TouchableOpacity onPress={() => navigation.goBack()}>
-                <Ionicons name="chevron-back-outline" size={24} color="white" />
-              </TouchableOpacity>
-              <Text
-                style={{
-                  color: "white",
-                  fontSize: 20,
-                  fontWeight: "bold",
-                  marginLeft: 5,
-                }}
-              >
-                Settings
-              </Text>
-            </View>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons name="chevron-back-outline" size={24} color={ theme.text } />
+        </TouchableOpacity>
+        <Text
+          style={{
+            color: theme.text,
+            fontSize: 20,
+            fontWeight: "bold",
+            marginLeft: 5,
+          }}
+        >
+          Settings
+        </Text>
+      </View>
+      <TouchableOpacity style={styles.option} onPress={toggleTheme}>
+        <Ionicons name="sunny-outline" size={20} color={ theme.text } />
+        <Text style={styles.optionText}>Change Theme</Text>
+      </TouchableOpacity>
 
       <TouchableOpacity style={styles.option} onPress={() => navigation.navigate('ChangeEmail')}>
-        <Ionicons name="mail-outline" size={20} color="white" />
+        <Ionicons name="mail-outline" size={20} color={ theme.text } />
         <Text style={styles.optionText}>Change email</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.option} onPress={() => navigation.navigate('ChangePassword')}>
-        <MaterialIcons name="lock-outline" size={20} color="white" />
+        <MaterialIcons name="lock-outline" size={20} color={ theme.text } />
         <Text style={styles.optionText}>Update password</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.option} onPress={handleLogout}>
-        <Ionicons name="log-out-outline" size={20} color="white" />
+        <Ionicons name="log-out-outline" size={20} color={ theme.text } />
         <Text style={styles.optionText}>Log Out</Text>
       </TouchableOpacity>
     </SafeAreaView>
@@ -56,29 +90,4 @@ const SettingsScreen = () => {
 
 export default SettingsScreen;
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#111',
-    padding: 20,
-  },
-  header: {
-    flexDirection: 'row',
-  },
-  heading: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 30,
-  },
-  option: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 15,
-  },
-  optionText: {
-    color: '#fff',
-    fontSize: 16,
-    marginLeft: 10,
-  },
-});
+
