@@ -7,12 +7,13 @@ import {
   ScrollView,
   Alert,
   ActivityIndicator,
+  Image,
 } from "react-native";
-import FlavorBotLogoWithText from "../components/FlavorBotLogoWithText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
+import { useTheme } from "../ThemeContext";
 
 const AiRecipeFormScreen = () => {
   const [budget, setBudget] = useState("");
@@ -23,6 +24,66 @@ const AiRecipeFormScreen = () => {
   const [cookingMethod, setCookingMethod] = useState("");
   const [loading, setLoading] = useState(false); // Loading state
   const navigation = useNavigation();
+  const { theme } = useTheme();
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      padding: 20,
+      paddingBottom: 0,
+      backgroundColor: theme.background,
+    },
+    scrollContainer: {
+      flexGrow: 1,
+    },
+    logoContainer: {
+      alignItems: "center",
+      marginBottom: 20,
+    },
+    inputGroup: {
+      marginBottom: 20,
+    },
+    label: {
+      color: theme.text,
+      fontSize: 16,
+      marginBottom: 6,
+      fontWeight: "bold",
+    },
+    smallText: {
+      fontSize: 12,
+      fontWeight: "normal",
+      color: theme.placeholder,
+    },
+    input: {
+      backgroundColor: theme.inputBG,
+      borderRadius: 8,
+      padding: 12,
+      fontSize: 16,
+      color: theme.text,
+    },
+    button: {
+      backgroundColor: theme.buttonBG,
+      borderRadius: 8,
+      paddingVertical: 15,
+      alignItems: "center",
+    },
+    buttonText: {
+      color: theme.text,
+      fontSize: 16,
+      fontWeight: "bold",
+    },
+    loadingContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: theme.background,
+    },
+    loadingText: {
+      color: theme.text,
+      fontSize: 18,
+      marginTop: 10,
+    },
+  });
 
   const generateRecipe = async () => {
     const prompt = `
@@ -78,7 +139,7 @@ const AiRecipeFormScreen = () => {
     // Render loading screen while generating recipe
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#fff"  />
+        <ActivityIndicator size="large" color={theme.text} />
         <Text style={styles.loadingText}>Generating your recipe...</Text>
       </View>
     );
@@ -87,7 +148,7 @@ const AiRecipeFormScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.logoContainer}>
-        <FlavorBotLogoWithText />
+        <Image source={require('../assets/flavorbot-logo.png')} style={{ height: 51 }}/>
       </View>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.inputGroup}>
@@ -95,7 +156,7 @@ const AiRecipeFormScreen = () => {
           <TextInput
             style={styles.input}
             placeholder="500"
-            placeholderTextColor="#ccc"
+            placeholderTextColor={theme.placeholder}
             keyboardType="numeric"
             value={budget}
             onChangeText={setBudget}
@@ -109,7 +170,7 @@ const AiRecipeFormScreen = () => {
           <TextInput
             style={styles.input}
             placeholder="chicken breast, garlic, onions"
-            placeholderTextColor="#ccc"
+            placeholderTextColor={theme.placeholder}
             value={ingredients}
             onChangeText={setIngredients}
           />
@@ -123,7 +184,7 @@ const AiRecipeFormScreen = () => {
           <TextInput
             style={styles.input}
             placeholder="vegetarian, without oil"
-            placeholderTextColor="#ccc"
+            placeholderTextColor={theme.placeholder}
             value={preferences}
             onChangeText={setPreferences}
           />
@@ -134,7 +195,7 @@ const AiRecipeFormScreen = () => {
           <TextInput
             style={styles.input}
             placeholder="Filipino"
-            placeholderTextColor="#ccc"
+            placeholderTextColor={theme.placeholder}
             value={dishType}
             onChangeText={setDishType}
           />
@@ -145,7 +206,7 @@ const AiRecipeFormScreen = () => {
           <TextInput
             style={styles.input}
             placeholder="Lunch"
-            placeholderTextColor="#ccc"
+            placeholderTextColor={theme.placeholder}
             value={mealTime}
             onChangeText={setMealTime}
           />
@@ -155,7 +216,7 @@ const AiRecipeFormScreen = () => {
           <TextInput
             style={styles.input}
             placeholder="Grilling"
-            placeholderTextColor="#ccc"
+            placeholderTextColor={theme.placeholder}
             value={cookingMethod}
             onChangeText={setCookingMethod}
           />
@@ -171,7 +232,26 @@ const AiRecipeFormScreen = () => {
 };
 
 const AiRecipeResultScreen = ({ route }) => {
-  const { recipe } = route.params; // Access the 'recipe' parameter passed from AiRecipeFormScreen
+  const { recipe } = route.params;
+  const { theme } = useTheme();
+
+  const resultStyles = StyleSheet.create({
+    container: {
+      padding: 20,
+      backgroundColor: theme.background,
+    },
+    title: {
+      fontSize: 24,
+      fontWeight: "bold",
+      color: theme.text,
+      marginBottom: 20,
+    },
+    recipeText: {
+      fontSize: 16,
+      color: theme.text,
+      lineHeight: 24,
+    },
+  });
 
   return (
     <ScrollView contentContainerStyle={resultStyles.container}>
@@ -180,82 +260,6 @@ const AiRecipeResultScreen = ({ route }) => {
     </ScrollView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: "#111",
-  },
-  scrollContainer: {
-    flexGrow: 1,
-  },
-  logoContainer: {
-    alignItems: "center",
-    marginBottom: 50,
-  },
-  inputGroup: {
-    marginBottom: 20,
-  },
-  label: {
-    color: "#fff",
-    fontSize: 16,
-    marginBottom: 6,
-    fontWeight: "bold",
-  },
-  smallText: {
-    fontSize: 12,
-    fontWeight: "normal",
-    color: "#aaa",
-  },
-  input: {
-    backgroundColor: "#1e1e1e",
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-    color: "#fff",
-  },
-  button: {
-    backgroundColor: "#3B3B3B",
-    borderRadius: 8,
-    paddingVertical: 15,
-    alignItems: "center",
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#111",
-  },
-  loadingText: {
-    color: "#fff",
-    fontSize: 18,
-    marginTop: 10,
-  },
-});
-
-const resultStyles = StyleSheet.create({
-  container: {
-    padding: 20,
-    backgroundColor: "#000",
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#fff",
-    marginBottom: 20,
-  },
-  recipeText: {
-    fontSize: 16,
-    color: "#fff",
-    lineHeight: 24,
-  },
-});
 
 export default AiRecipeFormScreen;
 export { AiRecipeResultScreen };
