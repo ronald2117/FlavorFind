@@ -7,76 +7,63 @@ import {
   Alert,
   StyleSheet,
 } from "react-native";
-// import * as ImagePicker from 'expo-image-picker';
-// import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { doc, updateDoc } from "firebase/firestore";
 import { auth, db } from "../firebaseConfig";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useTheme } from "../ThemeContext";
 
 export default function EditProfileScreen({ navigation }) {
   const [username, setUsername] = useState("");
-  // const [image, setImage] = useState(null);
-  // const [uploading, setUploading] = useState(false);
+  const { theme, toggleTheme, isDark } = useTheme();
 
-  // const pickImage = async (fromCamera = false) => {
-  //   let result;
-
-  //   if (fromCamera) {
-  //     const permission = await ImagePicker.requestCameraPermissionsAsync();
-  //     if (!permission.granted) {
-  //       alert('Camera permission is required!');
-  //       return;
-  //     }
-  //     result = await ImagePicker.launchCameraAsync();
-  //   } else {
-  //     result = await ImagePicker.launchImageLibraryAsync();
-  //   }
-
-  //   if (!result.canceled) {
-  //     setImage(result.assets[0].uri);
-  //   }
-  // };
-
-  // const uploadImageAsync = async (uri) => {
-  //   const response = await fetch(uri);
-  //   const blob = await response.blob();
-  //   const fileRef = ref(storage, `profileImages/${auth.currentUser.uid}.jpg`);
-  //   await uploadBytes(fileRef, blob);
-  //   return await getDownloadURL(fileRef);
-  // };
+  const styles = StyleSheet.create({
+    container: { flex: 1, backgroundColor: theme.background, padding: 20 },
+    header: { flexDirection: "row", alignItems: "center" },
+    card: {
+      marginTop: 190,
+      backgroundColor: theme.inputBG,
+      borderRadius: 10,
+      padding: 20,
+    },
+    label: { color: theme.placeholder },
+    input: {
+      color: theme.text,
+      borderBottomColor: theme.text,
+      borderBottomWidth: 1,
+      marginBottom: 15,
+    },
+    submitButton: {
+      backgroundColor: theme.buttonBG,
+      marginTop: 20,
+      padding: 15,
+      alignItems: "center",
+      borderRadius: 6,
+    },
+    submitText: { color: theme.text },
+  });
 
   const handleSubmit = async () => {
-    // setUploading(true);
     try {
-      // let imageUrl = null;
-      // if (image) {
-      //   imageUrl = await uploadImageAsync(image);
-      // }
-
       const userRef = doc(db, "users", auth.currentUser.uid);
       await updateDoc(userRef, {
         username,
-        // ...(imageUrl && { photoURL: imageUrl }),
       });
-
       Alert.alert("Profile updated!");
     } catch (error) {
       Alert.alert("Error updating profile", error.message);
-    } finally {
-      // setUploading(false);
     }
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "black", padding: 20 }}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="chevron-back-outline" size={24} color="white" />
+          <Ionicons name="chevron-back-outline" size={24} color={theme.text} />
         </TouchableOpacity>
         <Text
           style={{
-            color: "white",
+            color: theme.text,
             fontSize: 20,
             fontWeight: "bold",
             marginLeft: 5,
@@ -86,63 +73,20 @@ export default function EditProfileScreen({ navigation }) {
         </Text>
       </View>
 
-      <View
-        style={{
-          marginTop: 190,
-          backgroundColor: "#1e1e1e",
-          borderRadius: 10,
-          padding: 20,
-        }}
-      >
-        {/* <TouchableOpacity
-          onPress={() =>
-            Alert.alert('Choose image', '', [
-              { text: 'Choose existing photo', onPress: () => pickImage(false) },
-              { text: 'Use camera', onPress: () => pickImage(true) },
-              { text: 'Cancel', style: 'cancel' },
-            ])
-          }
-          style={{ alignItems: 'flex-end' }}
-        >
-          <Ionicons name="person-circle-outline" size={32} color="white" />
-        </TouchableOpacity> */}
-
-        <Text style={{ color: "gray" }}>Username</Text>
+      <View style={styles.card}>
+        <Text style={styles.label}>Username</Text>
         <TextInput
-          placeholder="@username"
-          placeholderTextColor="#aaa"
+          placeholder="New username"
+          placeholderTextColor={theme.placeholder}
           value={username}
           onChangeText={setUsername}
-          style={{
-            color: "white",
-            borderBottomColor: "#333",
-            borderBottomWidth: 1,
-            marginBottom: 15,
-          }}
+          style={styles.input}
         />
       </View>
 
-      <TouchableOpacity
-        onPress={handleSubmit}
-        style={{
-          backgroundColor: "#333",
-          marginTop: 20,
-          padding: 15,
-          alignItems: "center",
-          borderRadius: 6,
-        }}
-        // disabled={uploading}
-      >
-        <Text style={{ color: "white" }}>
-          {/* uploading ? 'Submitting...' : */ "Submit"}
-        </Text>
+      <TouchableOpacity onPress={handleSubmit} style={styles.submitButton}>
+        <Text style={styles.submitText}>Submit</Text>
       </TouchableOpacity>
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  header: {
-    flexDirection: "row",
-  },
-});

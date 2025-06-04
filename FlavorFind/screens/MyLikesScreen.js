@@ -4,10 +4,33 @@ import { db, auth } from "../firebaseConfig";
 import { collection, getDocs, query, where, orderBy } from "firebase/firestore";
 import PostCard from "../components/PostCard";
 import LoadingScreen from "./LoadingScreen";
+import { useTheme } from "../ThemeContext";
 
 export default function MyLikesScreen() {
   const [likedPosts, setLikedPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { theme } = useTheme();
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.background,
+    },
+    list: {
+      padding: 10,
+      flexGrow: 1, // Needed for vertical centering when empty
+    },
+    centered: {
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    emptyText: {
+      color: theme.placeholder,
+      fontSize: 16,
+      textAlign: "center",
+      paddingVertical: 20,
+    },
+  });
 
   const fetchLikedPosts = async () => {
     setLoading(true);
@@ -54,24 +77,3 @@ export default function MyLikesScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#111",
-  },
-  list: {
-    padding: 10,
-    flexGrow: 1, // Needed for vertical centering when empty
-  },
-  centered: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  emptyText: {
-    color: "#aaa",
-    fontSize: 16,
-    textAlign: "center",
-    paddingVertical: 20,
-  },
-});

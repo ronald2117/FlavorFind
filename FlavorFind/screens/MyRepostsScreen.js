@@ -4,10 +4,33 @@ import { db, auth } from "../firebaseConfig";
 import { collection, getDocs, query, where, orderBy } from "firebase/firestore";
 import PostCard from "../components/PostCard";
 import LoadingScreen from "./LoadingScreen";
+import { useTheme } from "../ThemeContext";
 
 export default function MyRepostsScreen() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { theme } = useTheme();
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.background,
+    },
+    list: {
+      padding: 10,
+      flexGrow: 1,
+    },
+    centered: {
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    emptyText: {
+      color: theme.placeholder,
+      fontSize: 16,
+      textAlign: "center",
+      paddingVertical: 20,
+    },
+  });
 
   const fetchReposts = async () => {
     setLoading(true);
@@ -54,24 +77,3 @@ export default function MyRepostsScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#000",
-  },
-  list: {
-    padding: 10,
-    flexGrow: 1,
-  },
-  centered: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  emptyText: {
-    color: "#aaa",
-    fontSize: 16,
-    textAlign: "center",
-    paddingVertical: 20,
-  },
-});

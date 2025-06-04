@@ -5,10 +5,33 @@ import { db, auth } from "../firebaseConfig";
 import PostCard from "../components/PostCard";
 import LoadingScreen from "./LoadingScreen";
 import EmptyScreen from "./EmptyScreen";
+import { useTheme } from "../ThemeContext";
 
 export default function MyRecipesScreen() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { theme } = useTheme();
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.background,
+    },
+    list: {
+      padding: 10,
+      flexGrow: 1, // Ensures centering works when FlatList is empty
+    },
+    centered: {
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    emptyText: {
+      color: theme.placeholder,
+      fontSize: 16,
+      textAlign: "center",
+      paddingVertical: 20,
+    },
+  });
 
   const fetchRecipes = async () => {
     setLoading(true);
@@ -56,29 +79,6 @@ export default function MyRecipesScreen() {
           <Text style={styles.emptyText}>There is nothing here.</Text>
         }
       />
-
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#111",
-  },
-  list: {
-    padding: 10,
-    flexGrow: 1, // Ensures centering works when FlatList is empty
-  },
-  centered: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  emptyText: {
-    color: "#aaa",
-    fontSize: 16,
-    textAlign: "center",
-    paddingVertical: 20,
-  },
-
-});
