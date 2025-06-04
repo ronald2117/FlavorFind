@@ -4,9 +4,50 @@ import { auth } from '../firebaseConfig';
 import { updateEmail } from 'firebase/auth';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '../ThemeContext'; // <-- Import useTheme
 
 const ChangeEmailScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
+  const { theme } = useTheme();
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.background,
+      padding: 20,
+    },
+    heading: {
+      fontSize: 22,
+      fontWeight: 'bold',
+      color: theme.text,
+      marginBottom: 20,
+    },
+    input: {
+      backgroundColor: theme.inputBG,
+      color: theme.text,
+      padding: 12,
+      borderRadius: 8,
+      marginBottom: 20,
+      marginTop: 5,
+    },
+    button: {
+      backgroundColor: theme.buttonBG,
+      padding: 15,
+      borderRadius: 8,
+      alignItems: 'center',
+    },
+    buttonText: {
+      color: theme.text,
+      fontWeight: '600',
+    },
+    backButton: {
+      marginBottom: 15,
+    },
+    row: {
+      flexDirection: 'row',
+      marginBottom: 15,
+    },
+  });
 
   const handleChangeEmail = async () => {
     try {
@@ -19,25 +60,18 @@ const ChangeEmailScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={{flexDirection: 'row', marginBottom: 15}}>
-        <TouchableOpacity onPress={() => navigation.goBack()} >
-          <Ionicons name="chevron-back-outline" size={24} color="white" />
+      <View style={styles.row}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Ionicons name="chevron-back-outline" size={24} color={theme.text} />
         </TouchableOpacity>
-        <Text
-          style={{
-            color: "white",
-            fontSize: 20,
-            fontWeight: "bold",
-            marginLeft: 5,
-          }}
-        >
+        <Text style={{ color: theme.text, fontSize: 20, fontWeight: "bold", marginLeft: 5 }}>
           Change Email
         </Text>
       </View>
       <TextInput
         style={styles.input}
         placeholder="New email"
-        placeholderTextColor="#999"
+        placeholderTextColor={theme.placeholder}
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
@@ -51,35 +85,3 @@ const ChangeEmailScreen = ({ navigation }) => {
 };
 
 export default ChangeEmailScreen;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#0D0D0D',
-    padding: 20,
-  },
-  heading: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 20,
-  },
-  input: {
-    backgroundColor: '#1E1E1E',
-    color: '#fff',
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 20,
-    marginTop: 5,
-  },
-  button: {
-    backgroundColor: '#2E2E2E',
-    padding: 15,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: '#fff',
-    fontWeight: '600',
-  },
-});

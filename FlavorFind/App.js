@@ -18,9 +18,7 @@ const Stack = createNativeStackNavigator();
 
 function AppTabs() {
   return (
-    <ThemeProvider>
-      <BottomTabs />
-    </ThemeProvider>
+    <BottomTabs />
   );
 }
 
@@ -28,14 +26,12 @@ function AppTabs() {
 
 function AuthStack() {
   return (
-    <ThemeProvider>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Welcome" component={WelcomeScreen} />
-        <Stack.Screen name="SignIn" component={SignInScreen} />
-        <Stack.Screen name="SignUp" component={SignUpScreen} />
-        <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
-      </Stack.Navigator>
-    </ThemeProvider>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Welcome" component={WelcomeScreen} />
+      <Stack.Screen name="SignIn" component={SignInScreen} />
+      <Stack.Screen name="SignUp" component={SignUpScreen} />
+      <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+    </Stack.Navigator>
   );
 }
 
@@ -74,9 +70,11 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer>
-      {user ? <AppTabs /> : <AuthStack />}
-    </NavigationContainer>
+    <ThemeProvider>
+      <NavigationContainer>
+        {user ? <AppTabs /> : <AuthStack />}
+      </NavigationContainer>r
+    </ThemeProvider>
   );
 }
 

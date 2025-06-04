@@ -23,7 +23,7 @@ const DarkTheme = {
   inputBG: '#2B2B2B',
   buttonBG: '#3B3B3B',
   backButtonFill: 'fff',
-  placeholder: '#111',
+  placeholder: '#888',
 };
 
 export const ThemeProvider = ({ children }) => {
