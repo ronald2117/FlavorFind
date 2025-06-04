@@ -6,18 +6,21 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebaseConfig';
 import * as SplashScreen from 'expo-splash-screen';
 
-import CustomSplashScreen from './screens/CustomSplashScreen'; 
+import CustomSplashScreen from './screens/CustomSplashScreen';
 import SignInScreen from './screens/SignInScreen';
 import SignUpScreen from './screens/SignUpScreen';
 import WelcomeScreen from './screens/WelcomeScreen';
 import BottomTabs from './components/BottomTabs';
 import ForgotPasswordScreen from './screens/ForgotPasswordScreen';
+import { ThemeProvider } from './ThemeContext';
 
 const Stack = createNativeStackNavigator();
 
 function AppTabs() {
   return (
-    <BottomTabs/>
+    <ThemeProvider>
+      <BottomTabs />
+    </ThemeProvider>
   );
 }
 
@@ -25,12 +28,14 @@ function AppTabs() {
 
 function AuthStack() {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Welcome" component={WelcomeScreen} />
-      <Stack.Screen name="SignIn" component={SignInScreen} />
-      <Stack.Screen name="SignUp" component={SignUpScreen} />
-      <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
-    </Stack.Navigator>
+    <ThemeProvider>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Welcome" component={WelcomeScreen} />
+        <Stack.Screen name="SignIn" component={SignInScreen} />
+        <Stack.Screen name="SignUp" component={SignUpScreen} />
+        <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+      </Stack.Navigator>
+    </ThemeProvider>
   );
 }
 
@@ -44,7 +49,7 @@ export default function App() {
     setIsReady(true);
   };
 
-  
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
@@ -52,14 +57,14 @@ export default function App() {
         setInitializing(false);
       }
     });
-    
+
     return unsubscribe;
   }, []);
-  
+
   if (!isReady) {
     return <CustomSplashScreen onReady={handleReady} />;
   }
-  
+
   if (initializing) {
     return (
       <View style={styles.container}>

@@ -1,12 +1,53 @@
 import React from 'react';
-import { View, Text, StyleSheet, Button, TouchableOpacity } from 'react-native';
-import Logo from '../components/Logo'; 
+import { Image, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useTheme } from '../ThemeContext';
 
 const WelcomeScreen = ({ navigation }) => {
+    const { theme } = useTheme();
+
+    const styles = StyleSheet.create({
+        container: {
+            flex: 1,
+            backgroundColor: theme.background,
+        },
+        logoContainer: {
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginTop: 50,
+        },
+        buttonContainer: {
+            padding: 20,
+            margin: 5,
+            justifyContent: 'flex-end',
+        },
+        loginButton: {
+            backgroundColor: theme.buttonBG,
+            borderRadius: 8,
+            paddingVertical: 15,
+            alignItems: 'center',
+        },
+        registerButton: {
+            backgroundColor: theme.buttonBG,
+            borderRadius: 8,
+            paddingVertical: 15,
+            alignItems: 'center',
+            marginBottom: 50,
+        },
+        buttonText: {
+            color: theme.text,
+            fontSize: 16,
+            fontWeight: 'bold',
+        },
+        buttonWrapper: {
+            marginVertical: 10, 
+        }
+    });
+
     return (
         <View style={styles.container}>
             <View style={styles.logoContainer}>
-                <Logo width={220} height={220} />
+                <Image source={require('../assets/welcome-icon.png')}  width={220} height={220} />
             </View>
             <View style={styles.buttonContainer}>
                 <View style={styles.buttonWrapper}>
@@ -29,45 +70,5 @@ const WelcomeScreen = ({ navigation }) => {
         </View>
     );
 };
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#111',
-    },
-    logoContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginTop: 50,
-    },
-    buttonContainer: {
-        padding: 20,
-        margin: 5,
-        justifyContent: 'flex-end',
-    },
-    loginButton: {
-        backgroundColor: '#3B3B3B',
-        borderRadius: 8,
-        paddingVertical: 15,
-        alignItems: 'center',
-    },
-    registerButton: {
-        backgroundColor: '#000',
-        borderRadius: 8,
-        paddingVertical: 15,
-        alignItems: 'center',
-        borderWidth: 2,
-        borderColor: '#FFD700', // Yellow border
-    },
-    buttonText: {
-        color: '#FFF',
-        fontSize: 16,
-        fontWeight: 'bold',
-    },
-    buttonWrapper: {
-        marginVertical: 10, 
-    }
-});
 
 export default WelcomeScreen;

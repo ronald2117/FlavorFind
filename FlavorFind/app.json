@@ -14,11 +14,17 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
-        "backgroundColor": "#ffffff"
-      }
+        "backgroundColor": "#000"
+      },
+      "package": "com.king3535.FlavorFind"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "2172ed06-f5ee-4fc8-886c-b2d60e3ecfb7"
+      }
     }
   }
 }
