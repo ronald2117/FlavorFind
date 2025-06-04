@@ -54,7 +54,7 @@ export default function LoginScreen({ navigation }) {
       marginBottom: 30,
     },
     forgotText: {
-      color: theme.background,
+      color: theme.text,
       fontSize: 14,
     },
     loginButton: {
@@ -95,7 +95,7 @@ export default function LoginScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Ionicons name="chevron-back-outline" size={25} color="white" style={{ marginTop: 30 }} />
+        <Ionicons name="chevron-back-outline" size={25} color={ theme.backButtonFill} style={{ marginTop: 30 }} />
       </TouchableOpacity>
 
       <Text style={styles.title}>Good to see you{'\n'}again!</Text>
@@ -103,7 +103,7 @@ export default function LoginScreen({ navigation }) {
       <TextInput
         style={styles.input}
         placeholder="Enter your email"
-        placeholderTextColor="#999"
+        placeholderTextColor={ theme.placeholder }
         value={email}
         onChangeText={setEmail}
       />
@@ -112,7 +112,7 @@ export default function LoginScreen({ navigation }) {
         <TextInput
           style={styles.passwordInput}
           placeholder="Enter your password"
-          placeholderTextColor="#999"
+          placeholderTextColor={ theme.placeholder }
           secureTextEntry={secureText}
           value={password}
           onChangeText={setPassword}

@@ -11,6 +11,8 @@ const LightTheme = {
   card: '#111111',
   inputBG: '#B8B8B8',
   buttonBG: '#B8B8B8',
+  backBtnFill: '000',
+  placeholder: '#111',
 };
 
 const DarkTheme = {
@@ -20,6 +22,8 @@ const DarkTheme = {
   card: '#1a1a1a',
   inputBG: '#2B2B2B',
   buttonBG: '#3B3B3B',
+  backButtonFill: 'fff',
+  placeholder: '#111',
 };
 
 export const ThemeProvider = ({ children }) => {
