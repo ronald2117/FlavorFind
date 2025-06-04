@@ -4,9 +4,50 @@ import { auth } from '../firebaseConfig';
 import { updatePassword } from 'firebase/auth';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTheme } from '../ThemeContext';
 
 const ChangePasswordScreen = ({ navigation }) => {
   const [password, setPassword] = useState('');
+  const { theme } = useTheme();
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.background,
+      padding: 20,
+    },
+    heading: {
+      fontSize: 22,
+      fontWeight: 'bold',
+      color: theme.text,
+      marginBottom: 20,
+    },
+    input: {
+      backgroundColor: theme.inputBG,
+      color: theme.text,
+      padding: 12,
+      borderRadius: 8,
+      marginBottom: 20,
+    },
+    button: {
+      backgroundColor: theme.buttonBG,
+      padding: 15,
+      borderRadius: 8,
+      alignItems: 'center',
+    },
+    buttonText: {
+      color: theme.text,
+      fontWeight: '600',
+    },
+    backButton: {
+      marginBottom: 15,
+    },
+    row: {
+      flexDirection: 'row',
+      marginBottom: 15,
+      alignItems: 'center',
+    },
+  });
 
   const handleChangePassword = async () => {
     try {
@@ -19,13 +60,13 @@ const ChangePasswordScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={{flexDirection: 'row', marginBottom: 15}}>
-        <TouchableOpacity onPress={() => navigation.goBack()} >
-          <Ionicons name="chevron-back-outline" size={24} color="white" />
+      <View style={styles.row}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Ionicons name="chevron-back-outline" size={24} color={theme.text} />
         </TouchableOpacity>
         <Text
           style={{
-            color: "white",
+            color: theme.text,
             fontSize: 20,
             fontWeight: "bold",
             marginLeft: 5,
@@ -37,7 +78,7 @@ const ChangePasswordScreen = ({ navigation }) => {
       <TextInput
         style={styles.input}
         placeholder="New password"
-        placeholderTextColor="#999"
+        placeholderTextColor={theme.placeholder}
         secureTextEntry
         value={password}
         onChangeText={setPassword}
@@ -50,34 +91,3 @@ const ChangePasswordScreen = ({ navigation }) => {
 };
 
 export default ChangePasswordScreen;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#0D0D0D',
-    padding: 20,
-  },
-  heading: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 20,
-  },
-  input: {
-    backgroundColor: '#1E1E1E',
-    color: '#fff',
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 20,
-  },
-  button: {
-    backgroundColor: '#2E2E2E',
-    padding: 15,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: '#fff',
-    fontWeight: '600',
-  },
-});
