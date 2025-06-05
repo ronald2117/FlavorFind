@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, FlatList, StyleSheet, Text } from "react-native";
+import { Image, View, FlatList, StyleSheet, Text } from "react-native";
 import {
   collection,
   getDocs,
@@ -12,7 +12,6 @@ import { db, auth } from "../firebaseConfig";
 import PostCard from "../components/PostCard";
 import { useIsFocused } from "@react-navigation/native";
 import LogoText from "../components/LogoText";
-import { SafeAreaView } from "react-native-safe-area-context";
 import LoadingScreen from "./LoadingScreen";
 import { useTheme } from "../ThemeContext";
 
@@ -114,7 +113,13 @@ const FeedScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <LogoText style={{ marginLeft: 15 }} />
+        <Image
+          source={theme.mode == 'dark'
+            ? require('../assets/logo-horizontal-dm.png')
+            : require('../assets/logo-horizontal-lm.png')}
+          style={{ marginLeft: 12, width: 250, height: 80 }}
+          resizeMode="contain"
+        />
         {/* <Ionicons
           name="search"
           size={30}
