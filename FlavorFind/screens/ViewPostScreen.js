@@ -257,7 +257,7 @@ const ViewPostScreen = ({ route, navigation }) => {
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <View style={styles.comment}>
-              <DefaultProfilePic style={styles.commentProfilePicContainer} />
+              <DefaultProfilePic style={styles.commentProfilePicContainer} stroke={theme.text}/>
               <View style={styles.commentContent}>
                 <Text style={styles.commentUsername}>{item.username}</Text>
                 <Text style={styles.commentText}>{item.text}</Text>
