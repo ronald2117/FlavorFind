@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { auth } from '../firebaseConfig';
 import { signOut } from 'firebase/auth';
@@ -40,12 +40,29 @@ const SettingsScreen = () => {
   });
 
   const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
-    } catch (error) {
-      alert('Logout failed: ' + error.message);
-    }
+    Alert.alert(
+      "Log Out",
+      "Are you sure you want to log out?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Log Out",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await signOut(auth);
+              // No navigation needed!
+            } catch (error) {
+              alert('Logout failed: ' + error.message);
+            }
+          },
+        },
+      ],
+      { cancelable: true }
+    );
   };
 
   return (
