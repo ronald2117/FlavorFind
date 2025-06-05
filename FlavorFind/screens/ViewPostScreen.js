@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Image, ScrollView } from 'react-native';
+import { View, Text, FlatList, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Image, ScrollView, Animated } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { doc, getDoc, collection, addDoc, query, orderBy, getDocs, serverTimestamp, updateDoc, increment } from 'firebase/firestore';
 import { db, auth } from '../firebaseConfig';
 import PostCard from '../components/PostCard';
 import DefaultProfilePic from '../components/DefaultProfilePic';
-import { Animated } from 'react-native';
+import { useTheme } from '../ThemeContext';
 
 const ViewPostScreen = ({ route, navigation }) => {
   const { postId } = route.params;
@@ -14,6 +14,119 @@ const ViewPostScreen = ({ route, navigation }) => {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
   const [loading, setLoading] = useState(true);
+  const { theme } = useTheme();
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.background,
+    },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      padding: 10,
+      backgroundColor: theme.background,
+    },
+    headerTitle: {
+      color: theme.text,
+      fontSize: 18,
+      fontWeight: 'bold',
+      marginLeft: 10,
+    },
+    loadingText: {
+      color: theme.text,
+      fontSize: 16,
+      textAlign: 'center',
+      marginTop: 20,
+    },
+    commentsList: {
+      padding: 10,
+    },
+    comment: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      marginBottom: 15,
+      backgroundColor: theme.inputBG,
+      padding: 10,
+      borderRadius: 8,
+    },
+    commentProfilePic: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+    },
+    commentProfilePicContainer: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      marginRight: 10,
+    },
+    commentContent: {
+      flex: 1,
+    },
+    commentUsername: {
+      color: theme.text,
+      fontWeight: 'bold',
+      marginBottom: 5,
+    },
+    commentText: {
+      color: theme.text,
+      marginBottom: 10,
+    },
+    commentActions: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    commentLikeButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    commentLikeText: {
+      color: theme.placeholder,
+      fontSize: 14,
+      marginLeft: 5,
+    },
+    addCommentContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      padding: 10,
+      borderTopWidth: 1,
+      borderTopColor: theme.card,
+      backgroundColor: theme.background,
+    },
+    commentInput: {
+      flex: 1,
+      backgroundColor: theme.inputBG,
+      color: theme.text,
+      borderRadius: 8,
+      padding: 10,
+      marginRight: 10,
+    },
+    sendButton: {
+      backgroundColor: theme.inputBG,
+      padding: 10,
+      borderRadius: 8,
+    },
+    replies: {
+      color: theme.text,
+      fontSize: 18,
+      fontWeight: 'bold',
+      marginLeft: 10,
+      marginTop: 10,
+      marginBottom: 10,
+      borderTopWidth: 1,
+      borderTopColor: theme.text,
+      paddingVertical: 12,
+      paddingHorizontal: 18
+    },
+    commentLikeCount: {
+      color: theme.placeholder,
+      fontWeight: 'bold',
+      fontSize: 14,
+      marginRight: 4,
+      marginLeft: 3,
+    },
+  });
 
   const fetchPost = async () => {
     try {
@@ -36,7 +149,7 @@ const ViewPostScreen = ({ route, navigation }) => {
       const querySnapshot = await getDocs(commentsQuery);
       const commentsData = querySnapshot.docs.map((doc) => ({
         id: doc.id,
-        scale: new Animated.Value(1), // add this
+        scale: new Animated.Value(1),
         ...doc.data(),
       }));
       setComments(commentsData);
@@ -50,8 +163,6 @@ const ViewPostScreen = ({ route, navigation }) => {
       console.error('Error fetching comments:', error);
     }
   };
-
-
 
   const addComment = async () => {
     if (newComment.trim() === '') return;
@@ -132,7 +243,7 @@ const ViewPostScreen = ({ route, navigation }) => {
     <SafeAreaView style={styles.container}>
       <ScrollView>
         <View style={styles.header}>
-          <Ionicons name="chevron-back-outline" size={24} color="white" onPress={() => navigation.goBack()} />
+          <Ionicons name="chevron-back-outline" size={24} color={theme.text} onPress={() => navigation.goBack()} />
           <Text style={styles.headerTitle}>Post Details</Text>
         </View>
         {post && (
@@ -154,13 +265,20 @@ const ViewPostScreen = ({ route, navigation }) => {
                   <TouchableOpacity onPress={() => handleLikeComment(item.id)} style={styles.commentLikeButton}>
                     <Animated.View style={{ transform: [{ scale: item.scale }] }}>
                       <Ionicons
-                        name="heart"
+                        name={
+                          item.userLikes?.includes(auth.currentUser?.uid)
+                            ? "heart"
+                            : "heart-outline"
+                        }
                         size={16}
-                        color={item.userLikes?.includes(auth.currentUser?.uid) ? "red" : "#555"}
+                        color={
+                          item.userLikes?.includes(auth.currentUser?.uid)
+                            ? "red"
+                            : theme.text
+                        }
                         style={{ marginLeft: 4 }}
                       />
                     </Animated.View>
-
                     <Text style={styles.commentLikeCount}>{item.likes || 0}</Text>
                   </TouchableOpacity>
                 </View>
@@ -177,129 +295,17 @@ const ViewPostScreen = ({ route, navigation }) => {
           <TextInput
             style={styles.commentInput}
             placeholder="Add a comment..."
-            placeholderTextColor="#888"
+            placeholderTextColor={theme.placeholder}
             value={newComment}
             onChangeText={setNewComment}
           />
           <TouchableOpacity onPress={addComment} style={styles.sendButton}>
-            <Ionicons name="send" size={20} color="white" />
+            <Ionicons name="send" size={20} fill={theme.inputBG} />
           </TouchableOpacity>
         </KeyboardAvoidingView>
       </ScrollView>
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#111',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 10,
-    backgroundColor: '#111',
-  },
-  headerTitle: {
-    color: 'white',
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginLeft: 10,
-  },
-  loadingText: {
-    color: 'white',
-    fontSize: 16,
-    textAlign: 'center',
-    marginTop: 20,
-  },
-  commentsList: {
-    padding: 10,
-  },
-  comment: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: 15,
-    backgroundColor: '#222',
-    padding: 10,
-    borderRadius: 8,
-  },
-  commentProfilePic: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-  },
-  commentProfilePicContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    marginRight: 10,
-  },
-  commentContent: {
-    flex: 1,
-  },
-  commentUsername: {
-    color: '#FFD700',
-    fontWeight: 'bold',
-    marginBottom: 5,
-  },
-  commentText: {
-    color: 'white',
-    marginBottom: 10,
-  },
-  commentActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  commentLikeButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  commentLikeText: {
-    color: '#555',
-    fontSize: 14,
-    marginLeft: 5,
-  },
-  addCommentContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 10,
-    borderTopWidth: 1,
-    borderTopColor: '#333',
-    backgroundColor: '#111',
-  },
-  commentInput: {
-    flex: 1,
-    backgroundColor: '#222',
-    color: 'white',
-    borderRadius: 8,
-    padding: 10,
-    marginRight: 10,
-  },
-  sendButton: {
-    backgroundColor: '#333',
-    padding: 10,
-    borderRadius: 8,
-  },
-  replies: {
-    color: 'white',
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginLeft: 10,
-    marginTop: 10,
-    marginBottom: 10,
-    borderTopWidth: 1,
-    borderTopColor: 'white',
-    paddingVertical: 12,
-    paddingHorizontal: 18
-  },
-  commentLikeCount: {
-    color: '#555',
-    fontWeight: 'bold',
-    fontSize: 14,
-    marginRight: 4,
-    marginLeft: 3,
-  },
-});
 
 export default ViewPostScreen;
