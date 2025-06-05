@@ -13,12 +13,15 @@ import WelcomeScreen from './screens/WelcomeScreen';
 import BottomTabs from './components/BottomTabs';
 import ForgotPasswordScreen from './screens/ForgotPasswordScreen';
 import { ThemeProvider } from './ThemeContext';
+import {SafeAreaView } from 'react-native-safe-area-context';
 
 const Stack = createNativeStackNavigator();
 
 function AppTabs() {
   return (
-    <BottomTabs />
+    <SafeAreaView style={{ flex: 1 }}>
+      <BottomTabs />
+    </SafeAreaView>
   );
 }
 

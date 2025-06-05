@@ -241,11 +241,11 @@ const ViewPostScreen = ({ route, navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <Ionicons name="chevron-back-outline" size={24} color={theme.text} onPress={() => navigation.goBack()} />
+        <Text style={styles.headerTitle}>Post Details</Text>
+      </View>
       <ScrollView>
-        <View style={styles.header}>
-          <Ionicons name="chevron-back-outline" size={24} color={theme.text} onPress={() => navigation.goBack()} />
-          <Text style={styles.headerTitle}>Post Details</Text>
-        </View>
         {post && (
           <PostCard post={post} currentUserId={auth.currentUser?.uid} />
         )}
@@ -257,7 +257,7 @@ const ViewPostScreen = ({ route, navigation }) => {
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <View style={styles.comment}>
-              <DefaultProfilePic style={styles.commentProfilePicContainer} stroke={theme.text}/>
+              <DefaultProfilePic style={styles.commentProfilePicContainer} stroke={theme.text} />
               <View style={styles.commentContent}>
                 <Text style={styles.commentUsername}>{item.username}</Text>
                 <Text style={styles.commentText}>{item.text}</Text>
@@ -288,22 +288,22 @@ const ViewPostScreen = ({ route, navigation }) => {
           contentContainerStyle={styles.commentsList}
         />
 
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-          style={styles.addCommentContainer}
-        >
-          <TextInput
-            style={styles.commentInput}
-            placeholder="Add a comment..."
-            placeholderTextColor={theme.placeholder}
-            value={newComment}
-            onChangeText={setNewComment}
-          />
-          <TouchableOpacity onPress={addComment} style={styles.sendButton}>
-            <Ionicons name="send" size={20} fill={theme.inputBG} />
-          </TouchableOpacity>
-        </KeyboardAvoidingView>
       </ScrollView>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        style={styles.addCommentContainer}
+      >
+        <TextInput
+          style={styles.commentInput}
+          placeholder="Add a comment..."
+          placeholderTextColor={theme.placeholder}
+          value={newComment}
+          onChangeText={setNewComment}
+        />
+        <TouchableOpacity onPress={addComment} style={styles.sendButton}>
+          <Ionicons name="send" size={20} fill={theme.inputBG} />
+        </TouchableOpacity>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };

@@ -15,6 +15,7 @@ import EditProfileScreen from "../screens/EditProfileScreen";
 import ChangeEmailScreen from "../screens/ChangeEmailScreen";
 import ChangePasswordScreen from "../screens/ChangePasswordScreen";
 import SettingsScreen from "../screens/SettingsScreen";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const AiStack = createNativeStackNavigator();
 function AiRecipeNavigator() {
@@ -57,8 +58,8 @@ function AccountNavigator() {
       <AccountStack.Screen name="ViewPost" component={ViewPostScreen} />
       <AccountStack.Screen name="EditProfile" component={EditProfileScreen} />
       <AccountStack.Screen name="ChangeEmail" component={ChangeEmailScreen} />
-      <AccountStack.Screen name="ChangePassword" component={ChangePasswordScreen}/>
-      <AccountStack.Screen name="Settings" component={SettingsScreen}/>
+      <AccountStack.Screen name="ChangePassword" component={ChangePasswordScreen} />
+      <AccountStack.Screen name="Settings" component={SettingsScreen} />
     </AccountStack.Navigator>
   );
 }

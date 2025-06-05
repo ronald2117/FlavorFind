@@ -112,7 +112,7 @@ const FeedScreen = () => {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.header}>
         <LogoText style={{ marginLeft: 15 }} />
         {/* <Ionicons
@@ -138,7 +138,7 @@ const FeedScreen = () => {
         onRefresh={fetchPosts}
         refreshing={loading}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 
