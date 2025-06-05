@@ -20,8 +20,10 @@ import {
 } from "firebase/firestore";
 import { db, auth } from "../firebaseConfig";
 import { useNavigation } from "@react-navigation/native";
+import { useTheme } from '../ThemeContext';
 
 const PostCard = ({ post, currentUserId, context, onReload }) => {
+  const { theme } = useTheme();
   const [isLiked, setIsLiked] = useState(
     post.likes?.includes(currentUserId) || false
   );
@@ -31,6 +33,73 @@ const PostCard = ({ post, currentUserId, context, onReload }) => {
   const [isSaved, setIsSaved] = useState(false);
   const navigation = useNavigation();
 
+  const styles = StyleSheet.create({
+    body: {
+      flex: 1,
+      position: "relative",
+    },
+    card: {
+      backgroundColor: theme.background,
+      borderRadius: 8,
+      padding: 15,
+      marginVertical: 8,
+      borderTopWidth: 1,
+      borderTopColor: theme.text,
+      flexDirection: "row",
+    },
+    profilePic: {
+      width: 50,
+      height: 50,
+      borderRadius: 25,
+      marginRight: 8,
+    },
+    username: {
+      fontWeight: "bold",
+      fontSize: 16,
+      color: theme.text,
+    },
+    postOption: {
+      position: "absolute",
+      right: 5,
+      padding: 5,
+    },
+    image: {
+      width: "100%",
+      height: 250,
+      marginTop: 10,
+      borderRadius: 8,
+      marginBottom: 10,
+    },
+    text: {
+      fontSize: 15,
+      lineHeight: 20,
+      marginTop: 5,
+      color: theme.text,
+      flexWrap: "wrap",
+      width: "100%",
+    },
+    actions: {
+      flexDirection: "row",
+      paddingTop: 10,
+      alignItems: "center",
+    },
+    actionButton: {
+      padding: 5,
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    actionText: {
+      fontSize: 14,
+      color: theme.text,
+      marginLeft: 5,
+    },
+    likedText: {
+      fontSize: 14,
+      color: "red",
+      fontWeight: "bold",
+      marginLeft: 5,
+    },
+  });
   useEffect(() => {
     const checkIfSaved = async () => {
       try {
@@ -234,7 +303,7 @@ const PostCard = ({ post, currentUserId, context, onReload }) => {
 
   return (
     <View style={styles.card}>
-      <DefaultProfilePic style={styles.profilePic} />
+      <DefaultProfilePic style={styles.profilePic} stroke={theme.text}/>
       <View style={styles.body}>
         <Text style={styles.username}>{post.username}</Text>
         <TouchableOpacity style={styles.postOption} onPress={handlePostOption}>
@@ -301,74 +370,5 @@ const PostCard = ({ post, currentUserId, context, onReload }) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  body: {
-    flex: 1,
-    position: "relative",
-  },
-  card: {
-    backgroundColor: "#111",
-    borderRadius: 8,
-    padding: 15,
-    marginVertical: 8,
-    elevation: 2,
-    borderTopWidth: 1,
-    borderTopColor: "#eee",
-    flexDirection: "row",
-  },
-  profilePic: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 8,
-  },
-  username: {
-    fontWeight: "bold",
-    fontSize: 16,
-    color: "#fff",
-  },
-  postOption: {
-    position: "absolute",
-    right: 5,
-    padding: 5,
-  },
-  image: {
-    width: "100%",
-    height: 250,
-    marginTop: 10,
-    borderRadius: 8,
-    marginBottom: 10,
-  },
-  text: {
-    fontSize: 15,
-    lineHeight: 20,
-    marginTop: 5,
-    color: "#fff",
-    flexWrap: "wrap",
-    width: "100%",
-  },
-  actions: {
-    flexDirection: "row",
-    paddingTop: 10,
-    alignItems: "center",
-  },
-  actionButton: {
-    padding: 5,
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  actionText: {
-    fontSize: 14,
-    color: "#555",
-    marginLeft: 5,
-  },
-  likedText: {
-    fontSize: 14,
-    color: "red",
-    fontWeight: "bold",
-    marginLeft: 5,
-  },
-});
 
 export default PostCard;

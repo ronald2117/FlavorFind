@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, FlatList, StyleSheet, Text, Button } from "react-native";
+import { View, FlatList, StyleSheet, Text } from "react-native";
 import {
   collection,
   getDocs,
@@ -14,12 +14,40 @@ import { useIsFocused } from "@react-navigation/native";
 import LogoText from "../components/LogoText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import LoadingScreen from "./LoadingScreen";
+import { useTheme } from "../ThemeContext";
 
 const FeedScreen = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const isFocused = useIsFocused();
+  const { theme } = useTheme();
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.background,
+    },
+    header: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      padding: 5,
+      backgroundColor: theme.background,
+    },
+    centered: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    listContent: {
+      paddingBottom: 20,
+    },
+    errorText: {
+      color: theme.text,
+      fontSize: 16,
+    },
+  });
 
   const fetchPosts = async () => {
     setLoading(true);
@@ -78,7 +106,7 @@ const FeedScreen = () => {
   if (error) {
     return (
       <View style={styles.centered}>
-        <Text>{error}</Text>
+        <Text style={styles.errorText}>{error}</Text>
       </View>
     );
   }
@@ -102,7 +130,7 @@ const FeedScreen = () => {
             post={item}
             currentUserId={auth.currentUser?.uid}
             context="newsfeed"
-            onReload={fetchPosts} 
+            onReload={fetchPosts}
           />
         )}
         keyExtractor={(item) => item.id}
@@ -113,27 +141,5 @@ const FeedScreen = () => {
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#111",
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 5,
-    backgroundColor: "#111",
-  },
-  centered: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  listContent: {
-    paddingBottom: 20,
-  },
-});
 
 export default FeedScreen;
