@@ -120,7 +120,7 @@ const AiRecipeFormScreen = () => {
         },
         {
           headers: {
-            Authorization: `Bearer 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`,
+            Authorization: `Bearer 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`,
             "Content-Type": "application/json",
           },
         }

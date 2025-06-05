@@ -10,9 +10,45 @@ import {
 import FlavorBotLogoWithText from "../components/FlavorBotLogoWithText";
 import * as Clipboard from "expo-clipboard";
 import Markdown from "react-native-markdown-display";
+import { useTheme } from '../ThemeContext';
 
 const AiRecipeResultScreen = ({ route }) => {
+  const { theme } = useTheme();
   const { recipe } = route.params;
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.background,
+    },
+    scrollContainer: {
+      padding: 20,
+    },
+    logoContainer: {
+      alignItems: "center",
+      marginBottom: 20,
+      marginTop: 30,
+    },
+    copyButton: {
+      backgroundColor: theme.buttonBG,
+      paddingVertical: 12,
+      borderRadius: 8,
+      alignItems: "center",
+    },
+    copyButtonText: {
+      color: theme.text,
+      fontSize: 16,
+      fontWeight: "bold",
+    },
+  });
+
+  const markdownStyles = {
+    body: {
+      color: theme.text,
+      fontSize: 16,
+      lineHeight: 24,
+    },
+  };
 
   const handleCopyToClipboard = async () => {
     try {
@@ -25,13 +61,13 @@ const AiRecipeResultScreen = ({ route }) => {
   };
 
   return (
-    <ScrollView
-      contentContainerStyle={styles.scrollContainer}
-      style={styles.container}
-    >
+    <View style={styles.container}>
       <View style={styles.logoContainer}>
         <FlavorBotLogoWithText />
       </View>
+    <ScrollView
+      contentContainerStyle={styles.scrollContainer}
+    >
       <Markdown style={markdownStyles}>{recipe}</Markdown>
       <TouchableOpacity
         style={styles.copyButton}
@@ -40,41 +76,8 @@ const AiRecipeResultScreen = ({ route }) => {
         <Text style={styles.copyButtonText}>Copy Recipe</Text>
       </TouchableOpacity>
     </ScrollView>
+    </View>
   );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#111",
-  },
-  scrollContainer: {
-    padding: 20,
-  },
-  logoContainer: {
-    alignItems: "center",
-    marginBottom: 20,
-    marginTop: 30,
-  },
-  copyButton: {
-    backgroundColor: "#3B3B3B", // Blue button
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: "center",
-  },
-  copyButtonText: {
-    color: "#FFF",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-});
-
-const markdownStyles = {
-  body: {
-    color: "#FFF",
-    fontSize: 16,
-    lineHeight: 24,
-  },
 };
 
 export default AiRecipeResultScreen;
