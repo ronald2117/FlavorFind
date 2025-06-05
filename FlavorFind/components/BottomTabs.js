@@ -76,14 +76,15 @@ export default function BottomTabs() {
         headerShown: false,
         tabBarStyle: {
           backgroundColor: theme.background,
-          borderTopColor: theme.placeholder,
+          borderTopWidth: 1,
+          borderTopColor: theme.text,
           height: 70,
           paddingTop: 10,
           paddingBottom: 10,
         },
         tabBarShowLabel: false,
         tabBarActiveTintColor: theme.text,
-        tabBarInactiveTintColor: theme.placeholder,
+        tabBarInactiveTintColor: theme.inactiveTab,
       }}
     >
       <Tab.Screen
@@ -100,7 +101,7 @@ export default function BottomTabs() {
         component={AiRecipeNavigator}
         options={{
           tabBarIcon: ({ focused }) =>
-            focused ? <FlavorBotLogo /> : <FlavorBotLogoBNW theme={theme.inactiveTab}/>,
+            focused ? <FlavorBotLogo /> : <FlavorBotLogoBNW theme={theme.inactiveTab} />,
         }}
       />
       <Tab.Screen

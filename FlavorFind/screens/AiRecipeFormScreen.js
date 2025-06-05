@@ -14,6 +14,7 @@ import { TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import { useTheme } from "../ThemeContext";
+import FlavorBotLogoWithText from "../components/FlavorBotLogoWithText";
 
 const AiRecipeFormScreen = () => {
   const [budget, setBudget] = useState("");
@@ -148,7 +149,7 @@ const AiRecipeFormScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.logoContainer}>
-        <Image source={require('../assets/flavorbot-logo.png')} style={{ height: 51 }}/>
+        <FlavorBotLogoWithText style={{ height: 51 }}/>
       </View>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.inputGroup}>

@@ -13,7 +13,7 @@ const LightTheme = {
   buttonBG: '#B8B8B8',
   backBtnFill: '000',
   placeholder: '#111',
-  inactiveTab: '#111',
+  inactiveTab: '#777',
 };
 
 const DarkTheme = {
