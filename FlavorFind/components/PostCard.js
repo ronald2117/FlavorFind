@@ -302,8 +302,11 @@ const PostCard = ({ post, currentUserId, context, onReload }) => {
 
 
   return (
-    <View style={styles.card}>
-      <DefaultProfilePic style={styles.profilePic} stroke={theme.text}/>
+    <TouchableOpacity
+      style={styles.card}
+      onPress={() => handleNavigateToComments(post.id)}
+    >
+      <DefaultProfilePic style={styles.profilePic} stroke={theme.text} />
       <View style={styles.body}>
         <Text style={styles.username}>{post.username}</Text>
         <TouchableOpacity style={styles.postOption} onPress={handlePostOption}>
@@ -367,7 +370,7 @@ const PostCard = ({ post, currentUserId, context, onReload }) => {
           </TouchableOpacity>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
