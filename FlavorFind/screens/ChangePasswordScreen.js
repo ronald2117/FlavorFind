@@ -45,7 +45,6 @@ const ChangePasswordScreen = ({ navigation }) => {
     row: {
       flexDirection: 'row',
       marginBottom: 15,
-      alignItems: 'center',
     },
   });
 
