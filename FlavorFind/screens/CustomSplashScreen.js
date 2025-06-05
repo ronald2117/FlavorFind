@@ -3,7 +3,8 @@ import { View, Text, StyleSheet, Image } from 'react-native';
 import { useTheme } from '../ThemeContext';
 
 const CustomSplashScreen = ({ onReady }) => {
-  
+  const { theme } = useTheme();
+
   useEffect(() => {
     const prepare = async () => {
       await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -15,7 +16,7 @@ const CustomSplashScreen = ({ onReady }) => {
 
   return (
     <View style={styles.container}>
-        <Image source={require('../assets/welcome-icon.png')} style={styles.image} />
+        <Image source={theme.mode == 'light' ? require('../assets/welcome-icon.png') : require('../assets/welcome-icon-dark-mode.png')}  width={220} height={220} />
       <Text style={styles.text}>Nomadic. Nostalgic. New.</Text>
     </View>
   );

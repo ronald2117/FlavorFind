@@ -95,7 +95,7 @@ export default function LoginScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Ionicons name="chevron-back-outline" size={25} color={ theme.backButtonFill} style={{ marginTop: 30 }} />
+        <Ionicons name="chevron-back-outline" size={25} color={ theme.text} style={{ marginTop: 30 }} />
       </TouchableOpacity>
 
       <Text style={styles.title}>Good to see you{'\n'}again!</Text>

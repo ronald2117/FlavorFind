@@ -64,7 +64,11 @@ export default function App() {
   }, []);
 
   if (!isReady) {
-    return <CustomSplashScreen onReady={handleReady} />;
+    return (
+      <ThemeProvider>
+        <CustomSplashScreen onReady={handleReady} />
+      </ThemeProvider>
+    );
   }
 
   if (initializing) {
