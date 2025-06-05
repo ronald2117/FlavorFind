@@ -47,7 +47,7 @@ const WelcomeScreen = ({ navigation }) => {
     return (
         <View style={styles.container}>
             <View style={styles.logoContainer}>
-                <Image source={require('../assets/welcome-icon.png')}  width={220} height={220} />
+                <Image source={theme.mode == 'light' ? require('../assets/welcome-icon.png') : require('../assets/welcome-icon-dark-mode.png')}  width={220} height={220} />
             </View>
             <View style={styles.buttonContainer}>
                 <View style={styles.buttonWrapper}>
