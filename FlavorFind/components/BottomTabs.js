@@ -1,3 +1,4 @@
+import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Ionicons } from "@expo/vector-icons";
@@ -15,7 +16,7 @@ import EditProfileScreen from "../screens/EditProfileScreen";
 import ChangeEmailScreen from "../screens/ChangeEmailScreen";
 import ChangePasswordScreen from "../screens/ChangePasswordScreen";
 import SettingsScreen from "../screens/SettingsScreen";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useTheme } from "../ThemeContext";
 
 const AiStack = createNativeStackNavigator();
 function AiRecipeNavigator() {
@@ -67,20 +68,22 @@ function AccountNavigator() {
 const Tab = createBottomTabNavigator();
 
 export default function BottomTabs() {
+  const { theme } = useTheme();
+
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: "#111",
-          borderTopColor: "gray",
+          backgroundColor: theme.background,
+          borderTopColor: theme.placeholder,
           height: 70,
           paddingTop: 10,
           paddingBottom: 10,
         },
         tabBarShowLabel: false,
-        tabBarActiveTintColor: "#fff",
-        tabBarInactiveTintColor: "#888",
+        tabBarActiveTintColor: theme.text,
+        tabBarInactiveTintColor: theme.placeholder,
       }}
     >
       <Tab.Screen
@@ -97,7 +100,7 @@ export default function BottomTabs() {
         component={AiRecipeNavigator}
         options={{
           tabBarIcon: ({ focused }) =>
-            focused ? <FlavorBotLogo /> : <FlavorBotLogoBNW />,
+            focused ? <FlavorBotLogo /> : <FlavorBotLogoBNW theme={theme.inactiveTab}/>,
         }}
       />
       <Tab.Screen

@@ -13,6 +13,7 @@ const LightTheme = {
   buttonBG: '#B8B8B8',
   backBtnFill: '000',
   placeholder: '#111',
+  inactiveTab: '#111',
 };
 
 const DarkTheme = {
@@ -24,6 +25,7 @@ const DarkTheme = {
   buttonBG: '#3B3B3B',
   backButtonFill: 'fff',
   placeholder: '#888',
+  inactiveTab: '#888',
 };
 
 export const ThemeProvider = ({ children }) => {
