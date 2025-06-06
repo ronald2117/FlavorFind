@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -10,7 +10,7 @@ import {
   ActivityIndicator,
   Platform,
 } from "react-native";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, updateDoc, getDoc } from "firebase/firestore";
 import { auth, db } from "../firebaseConfig";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -27,6 +27,22 @@ export default function EditProfileScreen({ navigation }) {
   const [profilePic, setProfilePic] = useState(null);
   const [uploading, setUploading] = useState(false);
   const { theme } = useTheme();
+  const [currentPhotoURL, setCurrentPhotoURL] = useState(null);
+
+  useEffect(() => {
+    const fetchPhotoURL = async () => {
+      try {
+        const userRef = doc(db, "users", auth.currentUser.uid);
+        const userSnap = await getDoc(userRef);
+        if (userSnap.exists()) {
+          setCurrentPhotoURL(userSnap.data().photoURL || null);
+        }
+      } catch (e) {
+        setCurrentPhotoURL(null);
+      }
+    };
+    fetchPhotoURL();
+  }, []);
 
   const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: theme.background, padding: 20 },
@@ -47,16 +63,15 @@ export default function EditProfileScreen({ navigation }) {
       width: "100%",
     },
     profilePic: {
-      width: 100,
-      height: 100,
+      width: 80,
+      height: 80,
       borderRadius: 50,
-      marginRight: 10,
+      margin: 5,
       backgroundColor: theme.card,
     },
     uploadBtn: {
       backgroundColor: theme.buttonBG,
       borderRadius: 6,
-      flexDirection: 'row',
       alignItems: 'center',
     },
     uploadBtnText: { color: theme.text },
@@ -152,9 +167,15 @@ export default function EditProfileScreen({ navigation }) {
 
       <View style={styles.card}>
         {/* Profile Picture Upload Option */}
-        <TouchableOpacity onPress={pickImage} disabled={uploading} style={{marginBottom: 10}}>
+        <TouchableOpacity onPress={pickImage} disabled={uploading} style={{ marginBottom: 10 }}> 
           <View style={styles.uploadBtn}>
+          {profilePic ? (
+            <Image source={{ uri: profilePic }} style={styles.profilePic} />
+          ) : currentPhotoURL ? (
+            <Image source={{ uri: currentPhotoURL }} style={styles.profilePic} />
+          ) : (
             <DefaultProfilePic style={styles.profilePic} />
+          )}
             <Text style={styles.uploadBtnText}>Change Profile Picture</Text>
           </View>
         </TouchableOpacity>
