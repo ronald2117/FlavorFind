@@ -7,23 +7,28 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
-    "splash": {},
+    "splash": {
+      "image": "./assets/logo.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
     "ios": {
       "supportsTablet": true
     },
+    "owner": "wewzer",
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
-        "backgroundColor": "#000"
+        "backgroundColor": "#000000"
       },
-      "package": "com.king3535.FlavorFind"
+      "package": "com.wewzer.FlavorFind"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "2172ed06-f5ee-4fc8-886c-b2d60e3ecfb7"
+        "projectId": "5b92be16-f59e-4d75-85e2-f915b6bbc849"
       }
     }
   }

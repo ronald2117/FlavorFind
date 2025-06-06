@@ -114,7 +114,7 @@ const AiRecipeFormScreen = () => {
       const response = await axios.post(
         "https://api.groq.com/openai/v1/chat/completions",
         {
-          model: "llama-3.3-70b-versatile",
+          model: "llama-3-8b-8192",
           messages: [{ role: "user", content: prompt }],
           temperature: 0.7,
         },

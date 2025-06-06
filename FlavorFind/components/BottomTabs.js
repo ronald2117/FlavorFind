@@ -17,12 +17,16 @@ import ChangeEmailScreen from "../screens/ChangeEmailScreen";
 import ChangePasswordScreen from "../screens/ChangePasswordScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 import { useTheme } from "../ThemeContext";
+import FlavorBotMenu from  "../screens/FlavorBotMenu";
+import FlavorBotChatScreen from "../screens/FlavorBotChatScreen";
 
 const AiStack = createNativeStackNavigator();
 function AiRecipeNavigator() {
   return (
     <AiStack.Navigator screenOptions={{ headerShown: false }}>
+      <AiStack.Screen name="AiMenu" component={FlavorBotMenu} />
       <AiStack.Screen name="AiForm" component={AiRecipeFormScreen} />
+      <AiStack.Screen name="AiChat" component={FlavorBotChatScreen} />
       <AiStack.Screen name="AiResult" component={AiRecipeResultScreen} />
     </AiStack.Navigator>
   );
@@ -78,9 +82,14 @@ export default function BottomTabs() {
           backgroundColor: theme.background,
           borderTopWidth: 1,
           borderTopColor: theme.text,
+          borderTopStyle: 'solid',
           height: 70,
           paddingTop: 10,
           paddingBottom: 10,
+          elevation: 0, 
+          shadowOpacity: 0, 
+          shadowColor: 'transparent',
+          shadowOffset: { height: 0 }, 
         },
         tabBarShowLabel: false,
         tabBarActiveTintColor: theme.text,
