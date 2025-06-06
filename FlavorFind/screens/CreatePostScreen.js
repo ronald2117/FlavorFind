@@ -22,8 +22,8 @@ import { useTheme } from '../ThemeContext';
 const MAX_CHAR = 500;
 
 // Cloudinary Configuration
-const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/dtt8pyj8o/image/upload'; // Replace YOUR_CLOUD_NAME
-const CLOUDINARY_UPLOAD_PRESET = 'react_native_unsigned'; // Replace YOUR_UPLOAD_PRESET_NAME
+const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/dtt8pyj8o/image/upload';
+const CLOUDINARY_UPLOAD_PRESET = 'react_native_unsigned'; 
 
 export default function CreatePostScreen() {
   const [text, setText] = useState('');
