@@ -8,12 +8,15 @@ import {
     TouchableOpacity,
     ActivityIndicator,
     Platform,
+    ToastAndroid, 
+    Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../ThemeContext";
 import FlavorBotLogoWithText from "../components/FlavorBotLogoWithText";
 import axios from "axios";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import * as Clipboard from 'expo-clipboard';
 
 const FlavorBotChatScreen = () => {
     const { theme } = useTheme();
@@ -166,15 +169,27 @@ const FlavorBotChatScreen = () => {
                         {messages
                             .filter(msg => msg.role !== "system")
                             .map((msg, idx) => (
-                                <View
+                                <TouchableOpacity
                                     key={idx}
-                                    style={[
-                                        styles.messageBubble,
-                                        msg.role === "user" ? styles.userBubble : styles.botBubble,
-                                    ]}
+                                    onLongPress={() => {
+                                        Clipboard.setStringAsync(msg.content);
+                                        if (Platform.OS === 'android') {
+                                            ToastAndroid.show('Copied to clipboard!', ToastAndroid.SHORT);
+                                        } else {
+                                            Alert.alert('Copied to clipboard!');
+                                        }
+                                    }}
+                                    activeOpacity={0.7}
                                 >
-                                    <Text style={styles.messageText}>{msg.content}</Text>
-                                </View>
+                                    <View
+                                        style={[
+                                            styles.messageBubble,
+                                            msg.role === "user" ? styles.userBubble : styles.botBubble,
+                                        ]}
+                                    >
+                                        <Text style={styles.messageText}>{msg.content}</Text>
+                                    </View>
+                                </TouchableOpacity>
                             ))}
                         {loading && (
                             <View style={styles.loadingContainer}>
