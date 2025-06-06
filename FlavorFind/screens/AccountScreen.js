@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView, RefreshControl } from 'react-native';
 import { auth } from '../firebaseConfig';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, onSnapshot } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 
 import DefaultProfilePic from '../components/DefaultProfilePic';
@@ -22,19 +22,34 @@ export default function AccountScreen() {
     const uid = user ? user.uid : null;
     const { theme } = useTheme();
     const [photoURL, setPhotoURL] = useState(null);
+    const [refreshing, setRefreshing] = useState(false);
+
+    const fetchPhotoURL = async () => {
+        if (uid) {
+            const userRef = doc(db, "users", uid);
+            const userSnap = await getDoc(userRef);
+            if (userSnap.exists()) {
+                setPhotoURL(userSnap.data().photoURL || null);
+            }
+        }
+    };
 
     useEffect(() => {
-        const fetchPhotoURL = async () => {
-            if (uid) {
-                const userRef = doc(db, "users", uid);
-                const userSnap = await getDoc(userRef);
-                if (userSnap.exists()) {
-                    setPhotoURL(userSnap.data().photoURL || null);
-                }
+        if (!uid) return;
+        const userRef = doc(db, "users", uid);
+        const unsubscribe = onSnapshot(userRef, (docSnap) => {
+            if (docSnap.exists()) {
+                setPhotoURL(docSnap.data().photoURL || null);
             }
-        };
-        fetchPhotoURL();
+        });
+        return () => unsubscribe();
     }, [uid]);
+
+    const onRefresh = async () => {
+        setRefreshing(true);
+        await fetchPhotoURL();
+        setRefreshing(false);
+    };
 
     const styles = StyleSheet.create({
         container: { flex: 1, backgroundColor: theme.background },
@@ -73,39 +88,54 @@ export default function AccountScreen() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <View style={{ flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }}>
-                <TouchableOpacity onPress={() => navigation.navigate('Settings')} style={{ marginLeft: 330 }}>
-                    <Ionicons name="settings-outline" size={24} color={theme.text} style={{ margin: 10 }} />
-                </TouchableOpacity>
-            </View>
-            <View style={styles.header}>
-                <View>
-                    <Text style={styles.name}>{user.displayName || 'Username'}</Text>
-                    <Text style={styles.email}>{user.email}</Text>
-                </View>
-                <View style={{ alignItems: 'center' }}>
-                    {photoURL ? (
-                        <Image source={{ uri: photoURL }} style={styles.profilePic} />
-                    ) : (
-                        <DefaultProfilePic width={90} height={90} stroke={theme.text} />
-                    )}
-                    <TouchableOpacity onPress={() => navigation.navigate('EditProfile')} style={styles.editButton}>
-                        <Text style={styles.edit}>Edit Profile</Text>
+            <ScrollView
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                        colors={[theme.text]}
+                        tintColor={theme.text}
+                    />
+                }
+                contentContainerStyle={{ flexGrow: 1 }}
+            >
+                <View style={{ flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }}>
+                    <TouchableOpacity onPress={() => navigation.navigate('Settings')} style={{ marginLeft: 330 }}>
+                        <Ionicons name="settings-outline" size={24} color={theme.text} style={{ margin: 10 }} />
                     </TouchableOpacity>
                 </View>
+                <View style={styles.header}>
+                    <View>
+                        <Text style={styles.name}>{user.displayName || 'Username'}</Text>
+                        <Text style={styles.email}>{user.email}</Text>
+                    </View>
+                    <View style={{ alignItems: 'center' }}>
+                        {photoURL ? (
+                            <Image source={{ uri: photoURL }} style={styles.profilePic} />
+                        ) : (
+                            <DefaultProfilePic width={90} height={90} stroke={theme.text} />
+                        )}
+                        <TouchableOpacity onPress={() => navigation.navigate('EditProfile')} style={styles.editButton}>
+                            <Text style={styles.edit}>Edit Profile</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+
+            </ScrollView>
+            <View style={{ flex: 1, minHeight: 400 }}>
+                <Tab.Navigator
+                    screenOptions={{
+                        tabBarActiveTintColor: theme.text,
+                        tabBarInactiveTintColor: theme.placeholder,
+                        tabBarStyle: styles.tabBar,
+                        tabBarLabelStyle: styles.tabBarLabel,
+                        tabBarIndicatorStyle: styles.tabBarIndicator,
+                    }}>
+                    <Tab.Screen name="Recipes" component={MyRecipesScreen} />
+                    <Tab.Screen name="Reposts" component={MyRepostsScreen} />
+                    <Tab.Screen name="Likes" component={MyLikesScreen} />
+                </Tab.Navigator>
             </View>
-            <Tab.Navigator
-                screenOptions={{
-                    tabBarActiveTintColor: theme.text,
-                    tabBarInactiveTintColor: theme.placeholder,
-                    tabBarStyle: styles.tabBar,
-                    tabBarLabelStyle: styles.tabBarLabel,
-                    tabBarIndicatorStyle: styles.tabBarIndicator,
-                }}>
-                <Tab.Screen name="Recipes" component={MyRecipesScreen} />
-                <Tab.Screen name="Reposts" component={MyRepostsScreen} />
-                <Tab.Screen name="Likes" component={MyLikesScreen} />
-            </Tab.Navigator>
         </SafeAreaView>
     );
 }
