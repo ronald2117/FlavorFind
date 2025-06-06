@@ -19,6 +19,10 @@ const FlavorBotChatScreen = () => {
     const { theme } = useTheme();
     const [messages, setMessages] = useState([
         {
+            role: "system",
+            content: "You are FlavorBot, an expert chef and food assistant. Only answer questions related to recipes, cooking, ingredients, or food. Politely refuse to answer anything unrelated to food or cooking.",
+        },
+        {
             role: "assistant",
             content: "Hi! I'm FlavorBot 🤖. Ask me anything about recipes, cooking tips, or food ideas!",
         },
@@ -159,17 +163,19 @@ const FlavorBotChatScreen = () => {
                             scrollViewRef.current?.scrollToEnd({ animated: true })
                         }
                     >
-                        {messages.map((msg, idx) => (
-                            <View
-                                key={idx}
-                                style={[
-                                    styles.messageBubble,
-                                    msg.role === "user" ? styles.userBubble : styles.botBubble,
-                                ]}
-                            >
-                                <Text style={styles.messageText}>{msg.content}</Text>
-                            </View>
-                        ))}
+                        {messages
+                            .filter(msg => msg.role !== "system")
+                            .map((msg, idx) => (
+                                <View
+                                    key={idx}
+                                    style={[
+                                        styles.messageBubble,
+                                        msg.role === "user" ? styles.userBubble : styles.botBubble,
+                                    ]}
+                                >
+                                    <Text style={styles.messageText}>{msg.content}</Text>
+                                </View>
+                            ))}
                         {loading && (
                             <View style={styles.loadingContainer}>
                                 <ActivityIndicator size="small" color={theme.text} />
