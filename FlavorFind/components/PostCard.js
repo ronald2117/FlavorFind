@@ -239,7 +239,21 @@ const PostCard = ({ post, currentUserId, context, onReload }) => {
   };
 
   const handlePostOption = () => {
-    if (context === "newsfeed") {
+    if (context === "reposts") {
+      Alert.alert(
+        "Repost Options",
+        "What would you like to do?",
+        [
+          {
+            text: "Remove from Reposts",
+            onPress: () => handleRemoveRepost(post.id),
+            style: "destructive",
+          },
+          { text: "Cancel", style: "cancel" },
+        ],
+        { cancelable: true }
+      );
+    } else {
       if (post.userId === currentUserId) {
         Alert.alert(
           "Post Options",
@@ -269,21 +283,8 @@ const PostCard = ({ post, currentUserId, context, onReload }) => {
           { cancelable: true }
         );
       }
-    } else if (context == "repost") {
-      Alert.alert(
-        "Repost Options",
-        "What would you like to do?",
-        [
-          {
-            text: "Remove from Reposts",
-            onPress: () => handleRemoveRepost(post.id),
-            style: "destructive",
-          },
-          { text: "Cancel", style: "cancel" },
-        ],
-        { cancelable: true }
-      );
     }
+
   };
 
   const handleDeletePost = async (postId) => {
