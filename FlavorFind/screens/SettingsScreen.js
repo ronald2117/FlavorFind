@@ -109,6 +109,14 @@ const SettingsScreen = () => {
         <Text style={styles.optionText}>Update password</Text>
       </TouchableOpacity>
 
+      <TouchableOpacity
+        style={styles.option}
+        onPress={() => navigation.navigate('Feedback')}
+      >
+        <Ionicons name="chatbubble-ellipses-outline" size={20} color={theme.text} />
+        <Text style={styles.optionText}>Send Feedback</Text>
+      </TouchableOpacity>
+
       <TouchableOpacity style={styles.option} onPress={handleLogout}>
         <Ionicons name="log-out-outline" size={20} color={ theme.text } />
         <Text style={styles.optionText}>Log Out</Text>

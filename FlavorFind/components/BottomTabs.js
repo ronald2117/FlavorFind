@@ -19,6 +19,7 @@ import SettingsScreen from "../screens/SettingsScreen";
 import { useTheme } from "../ThemeContext";
 import FlavorBotMenu from  "../screens/FlavorBotMenu";
 import FlavorBotChatScreen from "../screens/FlavorBotChatScreen";
+import FeedBackScreen from "../screens/FeedBackScreen";
 
 const AiStack = createNativeStackNavigator();
 function AiRecipeNavigator() {
@@ -65,6 +66,7 @@ function AccountNavigator() {
       <AccountStack.Screen name="ChangeEmail" component={ChangeEmailScreen} />
       <AccountStack.Screen name="ChangePassword" component={ChangePasswordScreen} />
       <AccountStack.Screen name="Settings" component={SettingsScreen} />
+      <AccountStack.Screen name="Feedback" component={FeedBackScreen} />
     </AccountStack.Navigator>
   );
 }
