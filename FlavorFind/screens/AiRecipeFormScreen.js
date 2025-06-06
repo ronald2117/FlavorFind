@@ -114,13 +114,13 @@ const AiRecipeFormScreen = () => {
       const response = await axios.post(
         "https://api.groq.com/openai/v1/chat/completions",
         {
-          model: "llama-3-8b-8192",
+          model: "meta-llama/llama-4-scout-17b-16e-instruct",
           messages: [{ role: "user", content: prompt }],
           temperature: 0.7,
         },
         {
           headers: {
-            Authorization: `Bearer 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`,
+            Authorization: `Bearer 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`,
             "Content-Type": "application/json",
           },
         }
