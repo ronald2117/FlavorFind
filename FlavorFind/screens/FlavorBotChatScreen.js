@@ -76,7 +76,7 @@ const FlavorBotChatScreen = ({ navigation }) => {
             borderRadius: 8,
             paddingHorizontal: 10,
             paddingVertical: 6,
-            marginBottom: Platform.OS === "ios" ? 10 : 0,
+            marginBottom: 13,
         },
         input: {
             flex: 1,
@@ -202,7 +202,6 @@ const FlavorBotChatScreen = ({ navigation }) => {
                         </View>
                     )}
                 </ScrollView>
-
                 <View style={styles.inputContainer}>
                     <TextInput
                         style={styles.input}

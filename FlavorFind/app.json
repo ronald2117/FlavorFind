@@ -17,6 +17,7 @@
     },
     "owner": "wewzer",
     "android": {
+      "softwareKeyboardLayoutMode": "resize",
       "applicationName": "FlavorFind",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
