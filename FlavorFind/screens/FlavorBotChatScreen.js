@@ -53,11 +53,11 @@ const FlavorBotChatScreen = () => {
             maxWidth: "80%",
         },
         userBubble: {
-            backgroundColor: theme.buttonBG,
+            backgroundColor: theme.userBubbleBG,
             alignSelf: "flex-end",
         },
         botBubble: {
-            backgroundColor: theme.inputBG,
+            backgroundColor: theme.botBubbleBG,
             alignSelf: "flex-start",
         },
         messageText: {
