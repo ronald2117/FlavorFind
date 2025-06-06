@@ -54,12 +54,23 @@ const SettingsScreen = () => {
           onPress: async () => {
             try {
               await signOut(auth);
-              // No navigation needed!
             } catch (error) {
               alert('Logout failed: ' + error.message);
             }
           },
         },
+      ],
+      { cancelable: true }
+    );
+  };
+
+  const handleThemeChange = () => {
+    Alert.alert(
+      "Change Theme",
+      `Are you sure you want to switch to ${theme.mode === "dark" ? "light" : "dark"} mode?`,
+      [
+        { text: "Yes", onPress: toggleTheme },
+        { text: "Cancel", style: "cancel" }
       ],
       { cancelable: true }
     );
@@ -82,7 +93,7 @@ const SettingsScreen = () => {
           Settings
         </Text>
       </View>
-      <TouchableOpacity style={styles.option} onPress={toggleTheme}>
+      <TouchableOpacity style={styles.option} onPress={handleThemeChange}>
         <Ionicons name="sunny-outline" size={20} color={ theme.text } />
         <Text style={styles.optionText}>Change Theme</Text>
       </TouchableOpacity>
