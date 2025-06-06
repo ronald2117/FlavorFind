@@ -151,7 +151,7 @@ const FlavorBotChatScreen = ({ navigation }) => {
     };
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <View style={styles.logoContainer}>
                 <TouchableOpacity onPress={() => navigation.goBack()}>
                     <Ionicons name="chevron-back-outline" size={24} color={theme.text} />
@@ -163,47 +163,46 @@ const FlavorBotChatScreen = ({ navigation }) => {
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
                 keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
             >
-                <View style={{ flex: 1 }}>
-                    <ScrollView
-                        ref={scrollViewRef}
-                        contentContainerStyle={{ paddingBottom: 10, flexGrow: 1 }}
-                        onContentSizeChange={() =>
-                            scrollViewRef.current?.scrollToEnd({ animated: true })
-                        }
-                        keyboardShouldPersistTaps="handled"
-                    >
-                        {messages
-                            .filter(msg => msg.role !== "system")
-                            .map((msg, idx) => (
-                                <TouchableOpacity
-                                    key={idx}
-                                    onLongPress={() => {
-                                        Clipboard.setStringAsync(msg.content);
-                                        if (Platform.OS === 'android') {
-                                            ToastAndroid.show('Copied to clipboard!', ToastAndroid.SHORT);
-                                        } else {
-                                            Alert.alert('Copied to clipboard!');
-                                        }
-                                    }}
-                                    activeOpacity={0.7}
+                <ScrollView
+                    ref={scrollViewRef}
+                    contentContainerStyle={{ flexGrow: 1, paddingBottom: 10 }}
+                    onContentSizeChange={() =>
+                        scrollViewRef.current?.scrollToEnd({ animated: true })
+                    }
+                    keyboardShouldPersistTaps="handled"
+                >
+                    {messages
+                        .filter(msg => msg.role !== "system")
+                        .map((msg, idx) => (
+                            <TouchableOpacity
+                                key={idx}
+                                onLongPress={() => {
+                                    Clipboard.setStringAsync(msg.content);
+                                    if (Platform.OS === 'android') {
+                                        ToastAndroid.show('Copied to clipboard!', ToastAndroid.SHORT);
+                                    } else {
+                                        Alert.alert('Copied to clipboard!');
+                                    }
+                                }}
+                                activeOpacity={0.7}
+                            >
+                                <View
+                                    style={[
+                                        styles.messageBubble,
+                                        msg.role === "user" ? styles.userBubble : styles.botBubble,
+                                    ]}
                                 >
-                                    <View
-                                        style={[
-                                            styles.messageBubble,
-                                            msg.role === "user" ? styles.userBubble : styles.botBubble,
-                                        ]}
-                                    >
-                                        <Text style={styles.messageText}>{msg.content}</Text>
-                                    </View>
-                                </TouchableOpacity>
-                            ))}
-                        {loading && (
-                            <View style={styles.loadingContainer}>
-                                <ActivityIndicator size="small" color={theme.text} />
-                            </View>
-                        )}
-                    </ScrollView>
-                </View>
+                                    <Text style={styles.messageText}>{msg.content}</Text>
+                                </View>
+                            </TouchableOpacity>
+                        ))}
+                    {loading && (
+                        <View style={styles.loadingContainer}>
+                            <ActivityIndicator size="small" color={theme.text} />
+                        </View>
+                    )}
+                </ScrollView>
+
                 <View style={styles.inputContainer}>
                     <TextInput
                         style={styles.input}
@@ -220,7 +219,8 @@ const FlavorBotChatScreen = ({ navigation }) => {
                     </TouchableOpacity>
                 </View>
             </KeyboardAvoidingView>
-        </View>
+
+        </SafeAreaView>
     );
 };
 

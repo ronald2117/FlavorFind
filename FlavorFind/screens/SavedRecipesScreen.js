@@ -54,12 +54,12 @@ const SavedRecipesScreen = () => {
       flexDirection: "row",
       alignItems: "center",
       padding: 10,
-      paddingTop: 45,
       marginLeft: 10,
       fontWeight: 'bold',
     },
     title: {
       color: theme.text,
+      fontWeight: '700',
       fontSize: 24,
     },
   });
