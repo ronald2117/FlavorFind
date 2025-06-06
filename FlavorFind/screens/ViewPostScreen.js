@@ -7,6 +7,7 @@ import { db, auth } from '../firebaseConfig';
 import PostCard from '../components/PostCard';
 import DefaultProfilePic from '../components/DefaultProfilePic';
 import { useTheme } from '../ThemeContext';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 const ViewPostScreen = ({ route, navigation }) => {
   const { postId } = route.params;
@@ -245,60 +246,63 @@ const ViewPostScreen = ({ route, navigation }) => {
         <Ionicons name="chevron-back-outline" size={24} color={theme.text} onPress={() => navigation.goBack()} />
         <Text style={styles.headerTitle}>Post Details</Text>
       </View>
-      <ScrollView>
-        {post && (
-          <PostCard post={post} currentUserId={auth.currentUser?.uid} />
-        )}
+      <KeyboardAwareScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ flexGrow: 1, padding: 20 }}
+        enableOnAndroid={true}
+        extraScrollHeight={118}
+      >
+        <ScrollView>
+          {post && (
+            <PostCard post={post} currentUserId={auth.currentUser?.uid} />
+          )}
 
-        <Text style={styles.replies}>Replies</Text>
-        {comments.length === 0 ? (
-          <Text style={{ color: theme.placeholder, textAlign: 'center', marginVertical: 16 }}>
-            No replies yet. Be the first to comment!
-          </Text>
-        ) : (
-          <FlatList
-            data={comments}
-            scrollEnabled={false}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <View style={styles.comment}>
-                <DefaultProfilePic style={styles.commentProfilePicContainer} stroke={theme.text} />
-                <View style={styles.commentContent}>
-                  <Text style={styles.commentUsername}>{item.username}</Text>
-                  <Text style={styles.commentText}>{item.text}</Text>
-                  <View style={styles.commentActions}>
-                    <TouchableOpacity onPress={() => handleLikeComment(item.id)} style={styles.commentLikeButton}>
-                      <Animated.View style={{ transform: [{ scale: item.scale }] }}>
-                        <Ionicons
-                          name={
-                            item.userLikes?.includes(auth.currentUser?.uid)
-                              ? "heart"
-                              : "heart-outline"
-                          }
-                          size={16}
-                          color={
-                            item.userLikes?.includes(auth.currentUser?.uid)
-                              ? "red"
-                              : theme.text
-                          }
-                          style={{ marginLeft: 4 }}
-                        />
-                      </Animated.View>
-                      <Text style={styles.commentLikeCount}>{item.likes || 0}</Text>
-                    </TouchableOpacity>
+          <Text style={styles.replies}>Replies</Text>
+          {comments.length === 0 ? (
+            <Text style={{ color: theme.placeholder, textAlign: 'center', marginVertical: 16 }}>
+              No replies yet. Be the first to comment!
+            </Text>
+          ) : (
+            <FlatList
+              data={comments}
+              scrollEnabled={false}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <View style={styles.comment}>
+                  <DefaultProfilePic style={styles.commentProfilePicContainer} stroke={theme.text} />
+                  <View style={styles.commentContent}>
+                    <Text style={styles.commentUsername}>{item.username}</Text>
+                    <Text style={styles.commentText}>{item.text}</Text>
+                    <View style={styles.commentActions}>
+                      <TouchableOpacity onPress={() => handleLikeComment(item.id)} style={styles.commentLikeButton}>
+                        <Animated.View style={{ transform: [{ scale: item.scale }] }}>
+                          <Ionicons
+                            name={
+                              item.userLikes?.includes(auth.currentUser?.uid)
+                                ? "heart"
+                                : "heart-outline"
+                            }
+                            size={16}
+                            color={
+                              item.userLikes?.includes(auth.currentUser?.uid)
+                                ? "red"
+                                : theme.text
+                            }
+                            style={{ marginLeft: 4 }}
+                          />
+                        </Animated.View>
+                        <Text style={styles.commentLikeCount}>{item.likes || 0}</Text>
+                      </TouchableOpacity>
+                    </View>
                   </View>
                 </View>
-              </View>
-            )}
-            contentContainerStyle={styles.commentsList}
-          />
-        )}
+              )}
+              contentContainerStyle={styles.commentsList}
+            />
+          )}
 
-      </ScrollView>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        style={styles.addCommentContainer}
-      >
+        </ScrollView>
+        <View style={{flexDirection: 'row'}}>
         <TextInput
           style={styles.commentInput}
           placeholder="Add a comment..."
@@ -309,7 +313,8 @@ const ViewPostScreen = ({ route, navigation }) => {
         <TouchableOpacity onPress={addComment} style={styles.sendButton}>
           <Ionicons name="send" size={20} fill={theme.inputBG} />
         </TouchableOpacity>
-      </KeyboardAvoidingView>
+        </View>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 };
