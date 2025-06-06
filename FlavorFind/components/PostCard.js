@@ -91,7 +91,7 @@ const PostCard = ({ post, currentUserId, context, onReload }) => {
     },
     actionText: {
       fontSize: 14,
-      color: theme.text,
+      color: theme.inactiveTab,
       marginLeft: 5,
     },
     likedText: {
@@ -332,7 +332,7 @@ const PostCard = ({ post, currentUserId, context, onReload }) => {
       <View style={styles.body}>
         <Text style={styles.username}>{post.username}</Text>
         <TouchableOpacity style={styles.postOption} onPress={handlePostOption}>
-          <Icon name="ellipsis-vertical" size={20} color="#fff" />
+          <Icon name="ellipsis-vertical" size={20} color={theme.text} />
         </TouchableOpacity>
         <Text style={styles.text}>{post.text}</Text>
         {post.imageUrl && (
