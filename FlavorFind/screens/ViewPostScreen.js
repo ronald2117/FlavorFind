@@ -251,42 +251,48 @@ const ViewPostScreen = ({ route, navigation }) => {
         )}
 
         <Text style={styles.replies}>Replies</Text>
-        <FlatList
-          data={comments}
-          scrollEnabled={false}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <View style={styles.comment}>
-              <DefaultProfilePic style={styles.commentProfilePicContainer} stroke={theme.text} />
-              <View style={styles.commentContent}>
-                <Text style={styles.commentUsername}>{item.username}</Text>
-                <Text style={styles.commentText}>{item.text}</Text>
-                <View style={styles.commentActions}>
-                  <TouchableOpacity onPress={() => handleLikeComment(item.id)} style={styles.commentLikeButton}>
-                    <Animated.View style={{ transform: [{ scale: item.scale }] }}>
-                      <Ionicons
-                        name={
-                          item.userLikes?.includes(auth.currentUser?.uid)
-                            ? "heart"
-                            : "heart-outline"
-                        }
-                        size={16}
-                        color={
-                          item.userLikes?.includes(auth.currentUser?.uid)
-                            ? "red"
-                            : theme.text
-                        }
-                        style={{ marginLeft: 4 }}
-                      />
-                    </Animated.View>
-                    <Text style={styles.commentLikeCount}>{item.likes || 0}</Text>
-                  </TouchableOpacity>
+        {comments.length === 0 ? (
+          <Text style={{ color: theme.placeholder, textAlign: 'center', marginVertical: 16 }}>
+            No replies yet. Be the first to comment!
+          </Text>
+        ) : (
+          <FlatList
+            data={comments}
+            scrollEnabled={false}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <View style={styles.comment}>
+                <DefaultProfilePic style={styles.commentProfilePicContainer} stroke={theme.text} />
+                <View style={styles.commentContent}>
+                  <Text style={styles.commentUsername}>{item.username}</Text>
+                  <Text style={styles.commentText}>{item.text}</Text>
+                  <View style={styles.commentActions}>
+                    <TouchableOpacity onPress={() => handleLikeComment(item.id)} style={styles.commentLikeButton}>
+                      <Animated.View style={{ transform: [{ scale: item.scale }] }}>
+                        <Ionicons
+                          name={
+                            item.userLikes?.includes(auth.currentUser?.uid)
+                              ? "heart"
+                              : "heart-outline"
+                          }
+                          size={16}
+                          color={
+                            item.userLikes?.includes(auth.currentUser?.uid)
+                              ? "red"
+                              : theme.text
+                          }
+                          style={{ marginLeft: 4 }}
+                        />
+                      </Animated.View>
+                      <Text style={styles.commentLikeCount}>{item.likes || 0}</Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
               </View>
-            </View>
-          )}
-          contentContainerStyle={styles.commentsList}
-        />
+            )}
+            contentContainerStyle={styles.commentsList}
+          />
+        )}
 
       </ScrollView>
       <KeyboardAvoidingView
