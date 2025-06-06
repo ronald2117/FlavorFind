@@ -17,6 +17,7 @@
     },
     "owner": "wewzer",
     "android": {
+      "applicationName": "FlavorFind",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#000000"
