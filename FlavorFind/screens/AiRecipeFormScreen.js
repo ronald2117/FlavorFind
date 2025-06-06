@@ -40,7 +40,8 @@ const AiRecipeFormScreen = () => {
     },
     logoContainer: {
       alignItems: "center",
-      marginBottom: 20,
+      flexDirection: "row",
+      marginBottom: 10,
     },
     inputGroup: {
       marginBottom: 20,
