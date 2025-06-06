@@ -15,6 +15,7 @@ import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import { useTheme } from "../ThemeContext";
 import FlavorBotLogoWithText from "../components/FlavorBotLogoWithText";
+import { Ionicons } from '@expo/vector-icons';
 
 const AiRecipeFormScreen = () => {
   const [budget, setBudget] = useState("");
