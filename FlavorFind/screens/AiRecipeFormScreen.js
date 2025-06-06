@@ -149,7 +149,10 @@ const AiRecipeFormScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.logoContainer}>
-        <FlavorBotLogoWithText style={{ height: 51 }}/>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons name="chevron-back-outline" size={24} color={theme.text} />
+        </TouchableOpacity>
+        <FlavorBotLogoWithText style={{ height: 60, marginLeft: 45 }} />
       </View>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.inputGroup}>

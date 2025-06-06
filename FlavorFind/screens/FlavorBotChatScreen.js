@@ -19,7 +19,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import * as Clipboard from 'expo-clipboard';
 import { Ionicons } from '@expo/vector-icons';
 
-const FlavorBotChatScreen = () => {
+const FlavorBotChatScreen = ({ navigation }) => {
     const { theme } = useTheme();
     const [messages, setMessages] = useState([
         {
@@ -44,6 +44,7 @@ const FlavorBotChatScreen = () => {
         },
         logoContainer: {
             alignItems: "center",
+            flexDirection: "row",
             marginBottom: 10,
         },
         chatContainer: {
@@ -152,7 +153,10 @@ const FlavorBotChatScreen = () => {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.logoContainer}>
-                <FlavorBotLogoWithText style={{ height: 60 }} />
+                <TouchableOpacity onPress={() => navigation.goBack()}>
+                    <Ionicons name="chevron-back-outline" size={24} color={theme.text} />
+                </TouchableOpacity>
+                <FlavorBotLogoWithText style={{ height: 60, marginLeft: 45}} />
             </View>
             <KeyboardAwareScrollView
                 style={{ flex: 1 }}
