@@ -1,10 +1,12 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { auth } from '../firebaseConfig';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../firebaseConfig";
 
 import DefaultProfilePic from '../components/DefaultProfilePic';
 import MyRecipesScreen from './MyRecipesScreen';
@@ -17,7 +19,22 @@ const Tab = createMaterialTopTabNavigator();
 export default function AccountScreen() {
     const navigation = useNavigation();
     const user = auth.currentUser;
-    const { theme, toggleTheme, isDark } = useTheme();
+    const uid = user ? user.uid : null;
+    const { theme } = useTheme();
+    const [photoURL, setPhotoURL] = useState(null);
+
+    useEffect(() => {
+        const fetchPhotoURL = async () => {
+            if (uid) {
+                const userRef = doc(db, "users", uid);
+                const userSnap = await getDoc(userRef);
+                if (userSnap.exists()) {
+                    setPhotoURL(userSnap.data().photoURL || null);
+                }
+            }
+        };
+        fetchPhotoURL();
+    }, [uid]);
 
     const styles = StyleSheet.create({
         container: { flex: 1, backgroundColor: theme.background },
@@ -32,7 +49,7 @@ export default function AccountScreen() {
         tabBar: { backgroundColor: theme.background },
         tabBarLabel: { fontSize: 14, color: theme.text },
         tabBarIndicator: { backgroundColor: '#1E90FF' },
-        profilePic: { width: 60, height: 60, borderRadius: 25, marginRight: 8 },
+        profilePic: { width: 90, height: 90, borderRadius: 45, marginRight: 8 },
         editButton: {
             backgroundColor: theme.buttonBG,
             paddingVertical: 8,
@@ -67,7 +84,11 @@ export default function AccountScreen() {
                     <Text style={styles.email}>{user.email}</Text>
                 </View>
                 <View style={{ alignItems: 'center' }}>
-                    <DefaultProfilePic width={90} height={90} stroke={theme.text}/>
+                    {photoURL ? (
+                        <Image source={{ uri: photoURL }} style={styles.profilePic} />
+                    ) : (
+                        <DefaultProfilePic width={90} height={90} stroke={theme.text} />
+                    )}
                     <TouchableOpacity onPress={() => navigation.navigate('EditProfile')} style={styles.editButton}>
                         <Text style={styles.edit}>Edit Profile</Text>
                     </TouchableOpacity>

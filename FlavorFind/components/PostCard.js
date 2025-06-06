@@ -31,12 +31,7 @@ const PostCard = ({ post, currentUserId, context, onReload }) => {
   const [scaleValue] = useState(new Animated.Value(1));
   const [saveScaleValue] = useState(new Animated.Value(1));
   const [isSaved, setIsSaved] = useState(false);
-  const [expanded, setExpanded] = useState(false);
-  const MAX_CHARS = 180;
-  const isLong = post.text.length > MAX_CHARS;
-  const displayText = !expanded && isLong
-    ? post.text.slice(0, MAX_CHARS) + "..."
-    : post.text;
+  const [ownerPhotoURL, setOwnerPhotoURL] = useState(null);
   const navigation = useNavigation();
 
   const styles = StyleSheet.create({
@@ -122,6 +117,23 @@ const PostCard = ({ post, currentUserId, context, onReload }) => {
 
     checkIfSaved();
   }, [post.id]);
+
+  useEffect(() => {
+    const fetchOwnerPhotoURL = async () => {
+      if (post.userId) {
+        try {
+          const userRef = doc(db, "users", post.userId);
+          const userSnap = await getDoc(userRef);
+          if (userSnap.exists()) {
+            setOwnerPhotoURL(userSnap.data().photoURL || null);
+          }
+        } catch (error) {
+          console.error("Error fetching user photoURL:", error);
+        }
+      }
+    };
+    fetchOwnerPhotoURL();
+  }, [post.userId]);
 
   const handleNavigateToComments = (postId) => {
     navigation.navigate("ViewPost", { postId });
@@ -312,23 +324,17 @@ const PostCard = ({ post, currentUserId, context, onReload }) => {
       style={styles.card}
       onPress={() => handleNavigateToComments(post.id)}
     >
-      <DefaultProfilePic style={styles.profilePic} stroke={theme.text} />
+      {ownerPhotoURL ? (
+        <Image source={{ uri: ownerPhotoURL }} style={styles.profilePic} />
+      ) : (
+        <DefaultProfilePic style={styles.profilePic} stroke={theme.text} />
+      )}
       <View style={styles.body}>
         <Text style={styles.username}>{post.username}</Text>
         <TouchableOpacity style={styles.postOption} onPress={handlePostOption}>
           <Icon name="ellipsis-vertical" size={20} color="#fff" />
         </TouchableOpacity>
-        <Text style={styles.text}>
-          {displayText}
-          {!expanded && isLong && (
-            <Text
-              style={{ color: "#007bff", fontWeight: "bold" }}
-              onPress={() => setExpanded(true)}
-            >
-              {" see more"}
-            </Text>
-          )}
-        </Text>
+        <Text style={styles.text}>{post.text}</Text>
         {post.imageUrl && (
           <Image
             source={{ uri: post.imageUrl }}

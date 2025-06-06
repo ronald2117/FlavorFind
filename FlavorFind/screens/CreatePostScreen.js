@@ -87,7 +87,7 @@ export default function CreatePostScreen() {
     const formData = new FormData();
     formData.append('file', {
       uri,
-      type: 'image/jpeg', // Assuming JPEG format
+      type: 'image/jpeg',
       name: `upload_${Date.now()}.jpg`,
     });
     formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
