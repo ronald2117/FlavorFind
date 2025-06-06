@@ -31,6 +31,12 @@ const PostCard = ({ post, currentUserId, context, onReload }) => {
   const [scaleValue] = useState(new Animated.Value(1));
   const [saveScaleValue] = useState(new Animated.Value(1));
   const [isSaved, setIsSaved] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const MAX_CHARS = 180;
+  const isLong = post.text.length > MAX_CHARS;
+  const displayText = !expanded && isLong
+    ? post.text.slice(0, MAX_CHARS) + "..."
+    : post.text;
   const navigation = useNavigation();
 
   const styles = StyleSheet.create({
@@ -312,7 +318,17 @@ const PostCard = ({ post, currentUserId, context, onReload }) => {
         <TouchableOpacity style={styles.postOption} onPress={handlePostOption}>
           <Icon name="ellipsis-vertical" size={20} color="#fff" />
         </TouchableOpacity>
-        <Text style={styles.text}>{post.text}</Text>
+        <Text style={styles.text}>
+          {displayText}
+          {!expanded && isLong && (
+            <Text
+              style={{ color: "#007bff", fontWeight: "bold" }}
+              onPress={() => setExpanded(true)}
+            >
+              {" see more"}
+            </Text>
+          )}
+        </Text>
         {post.imageUrl && (
           <Image
             source={{ uri: post.imageUrl }}
