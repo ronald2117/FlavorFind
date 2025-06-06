@@ -8,7 +8,7 @@ import {
     TouchableOpacity,
     ActivityIndicator,
     Platform,
-    ToastAndroid, 
+    ToastAndroid,
     Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -17,6 +17,7 @@ import FlavorBotLogoWithText from "../components/FlavorBotLogoWithText";
 import axios from "axios";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import * as Clipboard from 'expo-clipboard';
+import { Ionicons } from '@expo/vector-icons';
 
 const FlavorBotChatScreen = () => {
     const { theme } = useTheme();
@@ -78,10 +79,11 @@ const FlavorBotChatScreen = () => {
         },
         input: {
             flex: 1,
+            backgroundColor: theme.inputBG,
             color: theme.text,
-            fontSize: 16,
-            paddingVertical: 8,
-            backgroundColor: "transparent",
+            borderRadius: 8,
+            padding: 10,
+            marginRight: 10,
         },
         sendButton: {
             marginLeft: 8,
@@ -209,12 +211,8 @@ const FlavorBotChatScreen = () => {
                         editable={!loading}
                         returnKeyType="send"
                     />
-                    <TouchableOpacity
-                        style={styles.sendButton}
-                        onPress={sendMessage}
-                        disabled={loading}
-                    >
-                        <Text style={styles.sendButtonText}>Send</Text>
+                    <TouchableOpacity onPress={sendMessage} style={styles.sendButton} disabled={loading}>
+                        <Ionicons name="send" size={20} fill={theme.inputBG} />
                     </TouchableOpacity>
                 </View>
             </KeyboardAwareScrollView>
