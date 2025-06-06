@@ -241,7 +241,7 @@ const ViewPostScreen = ({ route, navigation }) => {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.header}>
         <Ionicons name="chevron-back-outline" size={24} color={theme.text} onPress={() => navigation.goBack()} />
         <Text style={styles.headerTitle}>Post Details</Text>
@@ -315,7 +315,7 @@ const ViewPostScreen = ({ route, navigation }) => {
         </TouchableOpacity>
         </View>
       </KeyboardAwareScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 

@@ -10,12 +10,12 @@ import {
     Platform,
     ToastAndroid,
     Alert,
+    KeyboardAvoidingView,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../ThemeContext";
 import FlavorBotLogoWithText from "../components/FlavorBotLogoWithText";
 import axios from "axios";
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import * as Clipboard from 'expo-clipboard';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -151,26 +151,26 @@ const FlavorBotChatScreen = ({ navigation }) => {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
             <View style={styles.logoContainer}>
                 <TouchableOpacity onPress={() => navigation.goBack()}>
                     <Ionicons name="chevron-back-outline" size={24} color={theme.text} />
                 </TouchableOpacity>
-                <FlavorBotLogoWithText style={{ height: 60, marginLeft: 45}} />
+                <FlavorBotLogoWithText style={{ height: 60, marginLeft: 45 }} />
             </View>
-            <KeyboardAwareScrollView
+            <KeyboardAvoidingView
                 style={{ flex: 1 }}
-                contentContainerStyle={{ flexGrow: 1, padding: 20 }}
-                enableOnAndroid={true}
-                extraScrollHeight={118}
+                behavior={Platform.OS === "ios" ? "padding" : "height"}
+                keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
             >
-                <View style={styles.chatContainer}>
+                <View style={{ flex: 1 }}>
                     <ScrollView
                         ref={scrollViewRef}
-                        contentContainerStyle={{ paddingBottom: 10 }}
+                        contentContainerStyle={{ paddingBottom: 10, flexGrow: 1 }}
                         onContentSizeChange={() =>
                             scrollViewRef.current?.scrollToEnd({ animated: true })
                         }
+                        keyboardShouldPersistTaps="handled"
                     >
                         {messages
                             .filter(msg => msg.role !== "system")
@@ -219,8 +219,8 @@ const FlavorBotChatScreen = ({ navigation }) => {
                         <Ionicons name="send" size={20} fill={theme.inputBG} />
                     </TouchableOpacity>
                 </View>
-            </KeyboardAwareScrollView>
-        </SafeAreaView>
+            </KeyboardAvoidingView>
+        </View>
     );
 };
 
