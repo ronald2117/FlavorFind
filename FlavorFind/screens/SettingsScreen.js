@@ -20,6 +20,7 @@ const SettingsScreen = () => {
     },
     header: {
       flexDirection: 'row',
+      marginBottom: 15,
     },
     heading: {
       fontSize: 22,
