@@ -4,7 +4,7 @@
 “People often share recipes across multiple platforms like Messenger, Instagram, or Facebook groups. There’s no focused space for community-driven recipe sharing that also gives AI-powered suggestions.”
 
 ## Solution
-“I built FlavorShare to solve this by combining a social feed with an AI chatbot that helps users discover and create new recipes based on ingredients, preferences, or cuisine.”
+“We built FlavorFind to solve this by combining a social feed with an AI chatbot that helps users discover and create new recipes based on ingredients, preferences, or cuisine.”
 
 ## Key Features
 User registration/login (Firebase Auth)
