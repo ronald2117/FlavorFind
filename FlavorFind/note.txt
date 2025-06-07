@@ -1,9 +1,0 @@
-##For logging out
-
-git config --unset user.name
-git config --unset user.email
-git credential-cache exit
-git credential-reject
-git push
-
-git test
