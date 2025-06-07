@@ -29,7 +29,7 @@ Working with Firebase taught me about real-time data handling and mobile data co
 📸 ![Home Screen](./screenshots/Screenshot_2025-06-07-14-45-25-243_com.wewzer.FlavorFind.jpg)
 📸 ![AI Chat](./screenshots/Screenshot_2025-06-07-14-45-34-010_com.wewzer.FlavorFind.jpg)
 📸 ![AI Recommender](./screenshots/Screenshot_2025-06-07-00-01-35-604_com.wewzer.FlavorFind.jpg)
-🔗 Add your GitHub repo or Expo link if available.
+🔗 [Github Repository](https://github.com/ronald2117/FlavorFind)
 
 ## Future Improvements
 “I plan to add recipe search by ingredient, offline access, short videos, post privacy, profile viewing, and regional language support.”
