@@ -25,11 +25,6 @@ Uploading images was challenging because storing pictures in Firestore incurs co
 ## What I Learned
 Working with Firebase taught me about real-time data handling and mobile data constraints. I also learned how to integrate AI features via an LLM.
 
-## Screnshots
-📸 ![Home Screen](./screenshots/Screenshot_2025-06-07-14-45-25-243_com.wewzer.FlavorFind.jpg){width=400 height=1000}
-📸 ![AI Chat](./screenshots/Screenshot_2025-06-07-14-45-34-010_com.wewzer.FlavorFind.jpg){width=400 height=1000}
-📸 ![AI Recommender](./screenshots/Screenshot_2025-06-07-00-01-35-604_com.wewzer.FlavorFind.jpg){width=400 height=1000}
-
 ## Download
 [Download apk via Google Drive](https://drive.google.com/drive/folders/1fQVMjCDes-mY1IXmFt3dm8KNMc62tzsc?usp=drive_link) 
 
