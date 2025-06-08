@@ -122,7 +122,7 @@ export default function AccountScreen() {
                 </View>
 
             </ScrollView>
-            <View style={{ flex: 1, minHeight: 400 }}>
+            <View style={{ flex: 1, minHeight: 500 }}>
                 <Tab.Navigator
                     screenOptions={{
                         tabBarActiveTintColor: theme.text,

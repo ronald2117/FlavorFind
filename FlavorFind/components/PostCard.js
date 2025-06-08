@@ -32,6 +32,7 @@ const PostCard = ({ post, currentUserId, context, onReload }) => {
   const [saveScaleValue] = useState(new Animated.Value(1));
   const [isSaved, setIsSaved] = useState(false);
   const [ownerPhotoURL, setOwnerPhotoURL] = useState(null);
+  const [ownerUsername, setOwnerUsername] = useState(post.username || "Anonymous");
   const navigation = useNavigation();
 
   const styles = StyleSheet.create({
@@ -134,6 +135,24 @@ const PostCard = ({ post, currentUserId, context, onReload }) => {
       }
     };
     fetchOwnerPhotoURL();
+  }, [post.userId]);
+
+  // Fetch owner's username using userId
+  useEffect(() => {
+    const fetchOwnerUsername = async () => {
+      if (post.userId) {
+        try {
+          const userRef = doc(db, "users", post.userId);
+          const userSnap = await getDoc(userRef);
+          if (userSnap.exists()) {
+            setOwnerUsername(userSnap.data().username || "Unknown User");
+          }
+        } catch (error) {
+          console.error("Error fetching user username:", error);
+        }
+      }
+    };
+    fetchOwnerUsername();
   }, [post.userId]);
 
   const handleNavigateToComments = (postId) => {
@@ -332,7 +351,7 @@ const PostCard = ({ post, currentUserId, context, onReload }) => {
         <DefaultProfilePic style={styles.profilePic} stroke={theme.text} />
       )}
       <View style={styles.body}>
-        <Text style={styles.username}>{post.username}</Text>
+        <Text style={styles.username}>{ownerUsername}</Text>
         <TouchableOpacity style={styles.postOption} onPress={handlePostOption}>
           <Icon name="ellipsis-vertical" size={20} color={theme.text} />
         </TouchableOpacity>
