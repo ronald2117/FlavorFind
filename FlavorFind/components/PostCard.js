@@ -6,7 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Animated,
-  Alert, // Import Alert for dialog functionality
+  Alert,
 } from "react-native";
 import DefaultProfilePic from "../components/DefaultProfilePic";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -101,6 +101,7 @@ const PostCard = ({ post, currentUserId, context, onReload }) => {
       marginLeft: 5,
     },
   });
+  
   useEffect(() => {
     const checkIfSaved = async () => {
       try {

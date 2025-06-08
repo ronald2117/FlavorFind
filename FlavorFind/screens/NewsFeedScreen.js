@@ -83,7 +83,7 @@ const FeedScreen = () => {
           };
         })
       );
-      setPosts(postsData);
+      setPosts(postsData.filter(post => (post.visibility === 'public' || !post.visibility)));
     } catch (err) {
       console.error("Error fetching posts: ", err);
       setError("Failed to load posts. Please try again.");

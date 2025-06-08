@@ -11,6 +11,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   TouchableOpacity,
+  Switch,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
@@ -30,6 +31,7 @@ export default function CreatePostScreen() {
   const [imageUri, setImageUri] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [isPublic, setIsPublic] = useState(true);
   const navigation = useNavigation();
   const { theme } = useTheme();
 
@@ -137,6 +139,7 @@ export default function CreatePostScreen() {
         likeCount: 0,
         commentCount: 0,
         comments: [],
+        visibility: isPublic ? 'public' : 'private',
       };
       await addDoc(collection(db, 'posts'), postData);
 
@@ -161,6 +164,24 @@ export default function CreatePostScreen() {
       >
         <ScrollView contentContainerStyle={styles.container}>
           <Text style={styles.title}>New Recipe Post</Text>
+
+          {/* Visibility Toggle */}
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 15 }}>
+            <Text style={{ color: theme.text, fontSize: 16, marginRight: 10 }}>
+              {isPublic ? 'Public' : 'Private'}
+            </Text>
+            <Switch
+              value={isPublic}
+              onValueChange={setIsPublic}
+              thumbColor={isPublic ? theme.buttonBG : theme.placeholder}
+              trackColor={{ false: theme.placeholder, true: theme.buttonBG }}
+            />
+            <Text style={{ color: theme.placeholder, marginLeft: 10, fontSize: 13 }}>
+              {isPublic
+                ? 'Everyone can see this post'
+                : 'Only you can see this post'}
+            </Text>
+          </View>
 
           <Text style={styles.label}>Description</Text>
           <TextInput
